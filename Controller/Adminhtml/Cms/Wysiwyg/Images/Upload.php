@@ -124,7 +124,7 @@ class Upload extends \Magento\Cms\Controller\Adminhtml\Wysiwyg\Images\Upload
             }
             $fileData = $this->getRequest()->getParam('file');
             $this->remoteFileUrl = $fileData['url'];
-            $this->validateRemoteFile($this->remoteFileUrl);
+            $this->validateRemoteFile();
             $localFileName = $fileData['name'];
             $localFilePath = $path . DIRECTORY_SEPARATOR . $localFileName;
             $this->validateRemoteFileExtensions($localFilePath);
