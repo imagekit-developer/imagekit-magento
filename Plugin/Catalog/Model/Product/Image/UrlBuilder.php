@@ -21,8 +21,12 @@ class UrlBuilder
 
     private $imageParamsBuilder;
 
-    public function __construct(ObjectManagerInterface $objectManager, ConfigInterface $presentationConfig, ConfigurationInterface $configuration, ImageKitClient $imageKitClient)
-    {
+    public function __construct(
+        ObjectManagerInterface $objectManager,
+        ConfigInterface $presentationConfig,
+        ConfigurationInterface $configuration,
+        ImageKitClient $imageKitClient
+    ) {
         $this->objectManager = $objectManager;
         $this->presentationConfig = $presentationConfig;
         $this->configuration = $configuration;
@@ -44,8 +48,9 @@ class UrlBuilder
         if ($url === 'no_selection') {
             return $url;
         }
-
+        // phpcs:ignore Magento2.PHP.LiteralNamespaces.LiteralClassUsage
         if (class_exists('\Magento\Catalog\Model\Product\Image\ParamsBuilder')) {
+            // phpcs:ignore Magento2.PHP.LiteralNamespaces.LiteralClassUsage
             $this->imageParamsBuilder = $this->objectManager->get('\Magento\Catalog\Model\Product\Image\ParamsBuilder');
         } else {
             //Skip on Magento versions prior to 2.3
@@ -54,10 +59,20 @@ class UrlBuilder
 
         try {
             if (strpos($url, $this->configuration->getMediaBaseUrl() . 'catalog/product') === 0) {
-                $imageArguments = $this->presentationConfig->getViewConfig()->getMediaAttributes('Magento_Catalog', CatalogImageHelper::MEDIA_TYPE_CONFIG_NODE, $imageDisplayArea);
+                $imageArguments = $this->presentationConfig
+                    ->getViewConfig()
+                    ->getMediaAttributes(
+                        'Magento_Catalog',
+                        CatalogImageHelper::MEDIA_TYPE_CONFIG_NODE,
+                        $imageDisplayArea
+                    );
                 $imageMiscParams = $this->imageParamsBuilder->build($imageArguments);
 
-                $imagePath = preg_replace('/^' . preg_quote($this->configuration->getMediaBaseUrl(), '/') . '/', '/', $url);
+                $imagePath = preg_replace(
+                    '/^' . preg_quote($this->configuration->getMediaBaseUrl(), '/') . '/',
+                    '/',
+                    $url
+                );
                 $imagePath = preg_replace('/\/catalog\/product\/cache\/[a-f0-9]{32}\//', '/', $imagePath);
 
                 $image = $this->configuration->getPath(sprintf('catalog/product%s', $imagePath));
@@ -81,7 +96,8 @@ class UrlBuilder
     {
         $keepFrame = true;
         $transformations = [];
-        $transformations['height'] = (isset($imageMiscParams['image_height'])) ? $imageMiscParams['image_height'] : null;
+        $transformations['height'] = (isset($imageMiscParams['image_height'])) ?
+            $imageMiscParams['image_height'] : null;
         $transformations['width'] = (isset($imageMiscParams['image_width'])) ? $imageMiscParams['image_width'] : null;
 
         $transformations['rotation'] = (isset($imageMiscParams['rotate'])) ? $imageMiscParams['rotate'] : null;

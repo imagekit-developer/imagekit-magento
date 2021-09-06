@@ -14,15 +14,21 @@ class Filter
 
     private $imageKitClient;
 
-    public function __construct(ConfigurationInterface $configuration, ImageKitWidgetFilter $imagekitWidgetFilter, ImageKitClient $imageKitClient)
-    {
+    public function __construct(
+        ConfigurationInterface $configuration,
+        ImageKitWidgetFilter $imagekitWidgetFilter,
+        ImageKitClient $imageKitClient
+    ) {
         $this->configuration = $configuration;
         $this->imagekitWidgetFilter = $imagekitWidgetFilter;
         $this->imageKitClient = $imageKitClient;
     }
 
-    public function aroundMediaDirective(\Magento\Widget\Model\Template\Filter $widgetFilter, callable $proceed, $construction)
-    {
+    public function aroundMediaDirective(
+        \Magento\Widget\Model\Template\Filter $widgetFilter,
+        callable $proceed,
+        $construction
+    ) {
         if (!$this->configuration->isEnabled()) {
             return $proceed($construction);
         }
@@ -33,7 +39,8 @@ class Filter
             return $proceed($construction);
         }
 
-        $url = (preg_match('/^&quot;.+&quot;$/', $params['url'])) ? preg_replace('/(^&quot;)|(&quot;$)/', '', $params['url']) : $params['url'];
+        $url = (preg_match('/^&quot;.+&quot;$/', $params['url'])) ?
+            preg_replace('/(^&quot;)|(&quot;$)/', '', $params['url']) : $params['url'];
 
         $image = $this->configuration->getPath($url);
 
@@ -43,5 +50,4 @@ class Filter
             ]
         );
     }
-
 }

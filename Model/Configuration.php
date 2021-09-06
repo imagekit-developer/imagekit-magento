@@ -69,7 +69,8 @@ class Configuration implements ConfigurationInterface
 
     public function isEnabled()
     {
-        return $this->coreRegistry->registry(self::CONFIG_PATH_ENABLED) || $this->configReader->isSetFlag(self::CONFIG_PATH_ENABLED);
+        return $this->coreRegistry->registry(self::CONFIG_PATH_ENABLED) ||
+            $this->configReader->isSetFlag(self::CONFIG_PATH_ENABLED);
     }
 
     public function getEndpoint()
@@ -95,7 +96,10 @@ class Configuration implements ConfigurationInterface
 
     public function getPath($file)
     {
-        return preg_match("#^" . preg_quote(DirectoryList::MEDIA . DIRECTORY_SEPARATOR, '/') . "#i", $file) ? $file : sprintf('%s/%s', DirectoryList::MEDIA, $file);
+        return preg_match(
+            "#^" . preg_quote(DirectoryList::MEDIA . DIRECTORY_SEPARATOR, '/') . "#i",
+            $file
+        ) ? $file : sprintf('%s/%s', DirectoryList::MEDIA, $file);
     }
 
     public function getMediaBaseUrl()

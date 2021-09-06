@@ -21,16 +21,25 @@ class ImageFactory
 
     private $imageParamsBuilder;
 
-    public function __construct(ObjectManagerInterface $objectManager, ConfigInterface $presentationConfig, ConfigurationInterface $configuration, ImageKitClient $imageKitClient)
-    {
+    public function __construct(
+        ObjectManagerInterface $objectManager,
+        ConfigInterface $presentationConfig,
+        ConfigurationInterface $configuration,
+        ImageKitClient $imageKitClient
+    ) {
         $this->objectManager = $objectManager;
         $this->presentationConfig = $presentationConfig;
         $this->configuration = $configuration;
         $this->imageKitClient = $imageKitClient;
     }
 
-    public function aroundCreate(ProductImageFactory $productImageFactory, callable $proceed, $product = null, $imageId = null, $attributes = null)
-    {
+    public function aroundCreate(
+        ProductImageFactory $productImageFactory,
+        callable $proceed,
+        $product = null,
+        $imageId = null,
+        $attributes = null
+    ) {
         $imageBlock = $proceed($product, $imageId, $attributes);
 
         if (!$this->configuration->isEnabled()) {
@@ -41,19 +50,26 @@ class ImageFactory
             return $imageBlock;
         }
 
+        // phpcs:ignore Magento2.PHP.LiteralNamespaces.LiteralClassUsage
         if (is_array($product) || !class_exists('\Magento\Catalog\Model\Product\Image\ParamsBuilder')) {
             return $imageBlock;
         }
 
+        // phpcs:ignore Magento2.PHP.LiteralNamespaces.LiteralClassUsage
         $this->imageParamsBuilder = $this->objectManager->get('\Magento\Catalog\Model\Product\Image\ParamsBuilder');
-
 
         try {
             if (strpos($imageBlock->getImageUrl(), $this->configuration->getMediaBaseUrl() . 'catalog/product') === 0) {
-                $viewImageConfig = $this->presentationConfig->getViewConfig()->getMediaAttributes('Magento_Catalog', CatalogImageHelper::MEDIA_TYPE_CONFIG_NODE, $imageId);
+                $viewImageConfig = $this->presentationConfig
+                    ->getViewConfig()
+                    ->getMediaAttributes('Magento_Catalog', CatalogImageHelper::MEDIA_TYPE_CONFIG_NODE, $imageId);
                 $imageMiscParams = $this->imageParamsBuilder->build($viewImageConfig);
 
-                $imagePath = preg_replace('/^' . preg_quote($this->configuration->getMediaBaseUrl(), '/') . '/', '/', $imageBlock->getImageUrl());
+                $imagePath = preg_replace(
+                    '/^' . preg_quote($this->configuration->getMediaBaseUrl(), '/') . '/',
+                    '/',
+                    $imageBlock->getImageUrl()
+                );
                 $imagePath = preg_replace('/\/catalog\/product\/cache\/[a-f0-9]{32}\//', '/', $imagePath);
 
                 $image = $this->configuration->getPath(sprintf('catalog/product%s', $imagePath));
@@ -80,7 +96,9 @@ class ImageFactory
     {
         $keepFrame = true;
         $transformations = [];
-        $transformations['height'] = (isset($imageMiscParams['image_height'])) ? $imageMiscParams['image_height'] : null;
+        $transformations['height'] = (isset($imageMiscParams['image_height'])) ?
+            $imageMiscParams['image_height'] :
+            null;
         $transformations['width'] = (isset($imageMiscParams['image_width'])) ? $imageMiscParams['image_width'] : null;
 
         $transformations['rotation'] = (isset($imageMiscParams['rotate'])) ? $imageMiscParams['rotate'] : null;

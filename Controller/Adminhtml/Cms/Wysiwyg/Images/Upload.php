@@ -10,6 +10,7 @@ use Magento\Framework\App\Filesystem\DirectoryResolver;
 use Magento\Framework\Controller\Result\JsonFactory;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Filesystem;
+use Magento\Framework\Filesystem\Io\File as FileIo;
 use Magento\Framework\HTTP\Adapter\Curl;
 use Magento\Framework\Image\AdapterFactory;
 use Magento\Framework\Registry;
@@ -77,8 +78,27 @@ class Upload extends \Magento\Cms\Controller\Adminhtml\Wysiwyg\Images\Upload
      */
     private $configuration;
 
-    public function __construct(Context $context, Registry $coreRegistry, JsonFactory $resultJsonFactory, DirectoryResolver $directoryResolver = null, DirectoryList $directoryList, Config $mediaConfig, Filesystem $fileSystem, AdapterFactory $imageAdapterFactory, Curl $curl, File $fileUtility, AllowedProtocols $protocolValidator, NotProtectedExtension $extensionValidator, ConfigurationInterface $configuration)
-    {
+    /**
+     * @var FileIo
+     */
+    private $file;
+
+    public function __construct(
+        Context $context,
+        Registry $coreRegistry,
+        JsonFactory $resultJsonFactory,
+        DirectoryResolver $directoryResolver = null,
+        DirectoryList $directoryList,
+        Config $mediaConfig,
+        Filesystem $fileSystem,
+        AdapterFactory $imageAdapterFactory,
+        Curl $curl,
+        File $fileUtility,
+        AllowedProtocols $protocolValidator,
+        NotProtectedExtension $extensionValidator,
+        ConfigurationInterface $configuration,
+        FileIo $file
+    ) {
         parent::__construct($context, $coreRegistry, $resultJsonFactory, $directoryResolver);
         $this->directoryList = $directoryList;
         $this->mediaConfig = $mediaConfig;
@@ -89,6 +109,7 @@ class Upload extends \Magento\Cms\Controller\Adminhtml\Wysiwyg\Images\Upload
         $this->extensionValidator = $extensionValidator;
         $this->protocolValidator = $protocolValidator;
         $this->configuration = $configuration;
+        $this->file = $file;
     }
 
     public function execute()
@@ -111,7 +132,6 @@ class Upload extends \Magento\Cms\Controller\Adminhtml\Wysiwyg\Images\Upload
             $this->imageAdapter->validateUploadFile($localFilePath);
 
             $result = $this->appendResultSaveRemoteImage($localFilePath);
-
         } catch (\Exception $e) {
             $result = ['error' => $e->getMessage(), 'errorcode' => $e->getCode()];
         }
@@ -143,7 +163,7 @@ class Upload extends \Magento\Cms\Controller\Adminhtml\Wysiwyg\Images\Upload
 
     private function validateRemoteFileExtensions($filePath)
     {
-        $extension = pathinfo($filePath, PATHINFO_EXTENSION);
+        $extension = $this->file->getPathInfo($filePath, PATHINFO_EXTENSION);
         $allowedExtensions = (array) $this->getStorage()->getAllowedExtensions($this->getRequest()->getParam('type'));
         if (!$this->extensionValidator->isValid($extension) || !in_array($extension, $allowedExtensions)) {
             throw new \Magento\Framework\Exception\ValidatorException(__('Disallowed file type.'));
@@ -165,11 +185,11 @@ class Upload extends \Magento\Cms\Controller\Adminhtml\Wysiwyg\Images\Upload
 
     protected function appendResultSaveRemoteImage($filePath)
     {
-        $fileInfo = pathinfo($filePath);
+        $fileInfo = $this->file->getPathInfo($filePath);
         $result['name'] = $fileInfo['basename'];
         $result['type'] = $this->imageAdapter->getMimeType();
         $result['error'] = 0;
-        $result['size'] = filesize($filePath);
+        $result['size'] = filesize($filePath); // phpcs:ignore Magento2.Functions.DiscouragedFunction.Discouraged
         $result['url'] = $this->getRequest()->getParam('remote_image');
         $result['file'] = $filePath;
         return $result;

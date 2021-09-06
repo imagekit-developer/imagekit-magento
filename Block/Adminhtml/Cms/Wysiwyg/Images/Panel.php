@@ -12,10 +12,19 @@ class Panel extends Template
 
         try {
             //Try to add session param on Magento versions prior to 2.3.5
-            $imageUploadUrl = $this->_urlBuilder->addSessionParam()->getUrl('imagekit/cms_wysiwyg_images/upload', ['type' => $this->_getMediaType()]);
+            $imageUploadUrl = $this->_urlBuilder
+                ->addSessionParam()
+                ->getUrl(
+                    'imagekit/cms_wysiwyg_images/upload',
+                    ['type' => $this->_getMediaType()]
+                );
         } catch (\Exception $e) {
             //Catch deprecation error on Magento 2.3.5 and above
-            $imageUploadUrl = $this->_urlBuilder->getUrl('imagekit/cms_wysiwyg_images/upload', ['type' => $this->_getMediaType()]);
+            $imageUploadUrl = $this->_urlBuilder
+                ->getUrl(
+                    'imagekit/cms_wysiwyg_images/upload',
+                    ['type' => $this->_getMediaType()]
+                );
         }
 
         return $imageUploadUrl;
