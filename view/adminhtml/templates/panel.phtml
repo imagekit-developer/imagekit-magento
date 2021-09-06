@@ -1,0 +1,31 @@
+<?php
+
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+// phpcs:disable Magento2.Files.LineLength, Generic.Files.LineLength
+/** @var \Magento\Framework\Escaper $escaper */
+?>
+
+<div id="imagekit-media-library-modal" class="imagekit-media-library-modal" style="display: none; height: 100%;">
+    <div class="imagekit-media-library-modal-content" id="imagekit-media-library-modal-content" style="height: 100%;" />
+</div>
+
+<script type="text/x-magento-init">
+    {
+        "#imagekit-media-library-modal": {
+            "Magento_Ui/js/core/app": {
+                "components": {
+                    "stock_panel": {
+                        "component": "ImageKit_ImageKitMagento/js/panel",
+                        "containerId": ".imagekit-media-library-modal",
+                        "ikMLContainer": "#imagekit-media-library-modal-content",
+                        "imageUploaderUrl": "<?= $block->getUploaderUrl() ?>",
+                    }
+                }
+            }
+        }
+    }
+</script>

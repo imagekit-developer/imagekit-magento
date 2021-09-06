@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+  <system>
+    <tab id="imagekit" translate="label" sortOrder="400" class="imagekit-configuration-tab">
+      <label>ImageKit</label>
+    </tab>
+    <section id="imagekit" translate="label" sortOrder="0" showInDefault="1" showInWebsite="0" showInStore="0">
+      <label>Settings</label>
+      <tab>imagekit</tab>
+      <resource>ImageKit_ImageKitMagento::config_imagekit</resource>
+      <group id="general" translate="label" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
+          <label>Enable Extension</label>
+          <attribute type="expanded">1</attribute>
+          <field id="enabled" translate="label comment" type="select" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
+              <label>Enable ImageKit</label>
+              <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+          </field>
+          <field id="module_version" translate="label" type="text" sortOrder="5" showInDefault="1" showInWebsite="0" showInStore="0">
+              <label>Module Version</label>
+              <frontend_model>ImageKit\ImageKitMagento\Block\Adminhtml\System\Config\ModuleVersion</frontend_model>
+          </field>
+      </group>
+      <group id="setup" translate="label" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
+          <label>ImageKit Account</label>
+          <comment>
+            <![CDATA[If you haven't created an account with ImageKit.io yet, then the first step is to <a href="https://imagekit.io/registration" target="_blank">register</a>.]]>
+          </comment>
+          <attribute type="expanded">1</attribute>
+          <field id="endpoint" translate="label comment" type="text" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
+              <label>ImageKit URL endpoint (or CNAME)</label>
+              <comment>
+                <![CDATA[Copy paste the ImageKit URL endpoint (or CNAME) from ImageKit <a href="https://imagekit.io/dashboard#url-endpoints" target="_blank">dashboard</a>. <a href="https://docs.imagekit.io/integration/integration-overview#step-2-access-the-image-through-imagekit-io-url-endpoint" target="_blank">Learn more</a>]]>
+              </comment>
+              <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+          </field>
+          <field id="private_key" translate="label comment" type="text" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
+              <label>ImageKit Private Key</label>
+              <comment>
+                <![CDATA[Copy paste the Private Key from ImageKit <a href="https://imagekit.io/dashboard#developers" target="_blank">developers section</a>. <a href="https://docs.imagekit.io/api-reference/api-introduction/api-keys" target="_blank">Learn more</a>]]>
+              </comment>
+              <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+          </field>
+      </group>
+    </section>
+  </system>
+</config>

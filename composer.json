@@ -1,0 +1,28 @@
+{
+  "name": "imagekit/imagekit-magento",
+  "description": "ImageKit 2 Magento Integration",
+  "type": "magento2-module",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "ImageKit Developer",
+      "email": "developer@imagekit.io"
+    },
+    {
+      "name": "Abhinav Dhiman",
+      "email": "me@abhinavdhiman.co"
+    }
+  ],
+  "minimum-stability": "dev",
+  "require": {
+    "imagekit/imagekit": "^1.2.2"
+  },
+  "autoload": {
+    "files": [
+      "registration.php"
+    ],
+    "psr-4": {
+      "ImageKit\\ImageKitMagento\\": ""
+    }
+  }
+}
