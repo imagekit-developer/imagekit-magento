@@ -5,10 +5,12 @@ namespace ImageKit\ImageKitMagento\Controller\Adminhtml\Cms\Wysiwyg\Images;
 use ImageKit\ImageKitMagento\Core\ConfigurationInterface;
 use Magento\Backend\App\Action\Context;
 use Magento\Catalog\Model\Product\Media\Config;
+use Magento\Cms\Block\Adminhtml\Wysiwyg\Images\Tree;
 use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\App\Filesystem\DirectoryResolver;
 use Magento\Framework\Controller\Result\JsonFactory;
 use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Exception\ValidatorException;
 use Magento\Framework\Filesystem;
 use Magento\Framework\Filesystem\Io\File as FileIo;
 use Magento\Framework\HTTP\Adapter\Curl;
@@ -17,8 +19,9 @@ use Magento\Framework\Registry;
 use Magento\Framework\Validator\AllowedProtocols;
 use Magento\MediaStorage\Model\File\Validator\NotProtectedExtension;
 use Magento\MediaStorage\Model\ResourceModel\File\Storage\File;
+use Magento\Cms\Controller\Adminhtml\Wysiwyg\Images\Upload as ImagesUpload;
 
-class Upload extends \Magento\Cms\Controller\Adminhtml\Wysiwyg\Images\Upload
+class Upload extends ImagesUpload
 {
 
     /**
@@ -83,6 +86,11 @@ class Upload extends \Magento\Cms\Controller\Adminhtml\Wysiwyg\Images\Upload
      */
     private $file;
 
+    /**
+     * @var Tree
+     */
+    private $tree;
+
     public function __construct(
         Context $context,
         Registry $coreRegistry,
@@ -97,7 +105,8 @@ class Upload extends \Magento\Cms\Controller\Adminhtml\Wysiwyg\Images\Upload
         AllowedProtocols $protocolValidator,
         NotProtectedExtension $extensionValidator,
         ConfigurationInterface $configuration,
-        FileIo $file
+        FileIo $file,
+        Tree $tree
     ) {
         parent::__construct($context, $coreRegistry, $resultJsonFactory, $directoryResolver);
         $this->directoryList = $directoryList;
@@ -110,6 +119,7 @@ class Upload extends \Magento\Cms\Controller\Adminhtml\Wysiwyg\Images\Upload
         $this->protocolValidator = $protocolValidator;
         $this->configuration = $configuration;
         $this->file = $file;
+        $this->tree = $tree;
     }
 
     public function execute()
@@ -118,22 +128,21 @@ class Upload extends \Magento\Cms\Controller\Adminhtml\Wysiwyg\Images\Upload
             $this->_initAction();
             $path = $this->getStorage()->getSession()->getCurrentPath();
             if (!$this->validatePath($path, DirectoryList::MEDIA)) {
-                throw new \Magento\Framework\Exception\LocalizedException(
+                throw new LocalizedException(
                     __('Directory %1 is not under storage root path.', $path)
                 );
             }
             $fileData = $this->getRequest()->getParam('file');
             $this->remoteFileUrl = $fileData['url'];
             $this->validateRemoteFile();
-            $localFileName = $fileData['name'];
-            $localFilePath = $path . DIRECTORY_SEPARATOR . $localFileName;
+            $localFilePath = $path .  $fileData['filePath'];
             $this->validateRemoteFileExtensions($localFilePath);
             $this->retrieveRemoteImage($this->remoteFileUrl, $localFilePath);
             $this->imageAdapter->validateUploadFile($localFilePath);
 
             $result = $this->appendResultSaveRemoteImage($localFilePath);
         } catch (\Exception $e) {
-            $result = ['error' => $e->getMessage(), 'errorcode' => $e->getCode()];
+            $result = ['error' => $e->getMessage(), 'errorcode' => $e->getCode(), 'trace' => $e->getTraceAsString()];
         }
 
         $resultJson = $this->resultJsonFactory->create();
@@ -163,10 +172,10 @@ class Upload extends \Magento\Cms\Controller\Adminhtml\Wysiwyg\Images\Upload
 
     private function validateRemoteFileExtensions($filePath)
     {
-        $extension = $this->file->getPathInfo($filePath, PATHINFO_EXTENSION);
+        $extension = $this->file->getPathInfo($filePath)['extension'];
         $allowedExtensions = (array) $this->getStorage()->getAllowedExtensions($this->getRequest()->getParam('type'));
         if (!$this->extensionValidator->isValid($extension) || !in_array($extension, $allowedExtensions)) {
-            throw new \Magento\Framework\Exception\ValidatorException(__('Disallowed file type.'));
+            throw new ValidatorException(__('Disallowed file type.'));
         }
     }
 
@@ -192,6 +201,7 @@ class Upload extends \Magento\Cms\Controller\Adminhtml\Wysiwyg\Images\Upload
         $result['size'] = filesize($filePath); // phpcs:ignore Magento2.Functions.DiscouragedFunction.Discouraged
         $result['url'] = $this->getRequest()->getParam('remote_image');
         $result['file'] = $filePath;
+        $result['tree_options'] = $this->tree->getTreeWidgetOptions()['folderTree'];
         return $result;
     }
 }
