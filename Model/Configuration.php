@@ -19,6 +19,9 @@ class Configuration implements ConfigurationInterface
     const CONFIG_PATH_ENDPOINT = 'imagekit/setup/endpoint';
     const CONFIG_PATH_PUBLIC_KEY = 'imagekit/setup/public_key';
     const CONFIG_PATH_PRIVATE_KEY = 'imagekit/setup/private_key';
+    const CONFIG_PATH_ORIGIN_CONFIGURED = 'imagekit/origin/configured';
+
+    const IK_UNIQ_PREFIX = "ik_";
 
     /**
      * @var ScopeConfigInterface
@@ -87,6 +90,11 @@ class Configuration implements ConfigurationInterface
     public function getPrivateKey()
     {
         return $this->configReader->getValue(self::CONFIG_PATH_PRIVATE_KEY);
+    }
+
+    public function isOriginConfigured()
+    {
+        return $this->configReader->getValue(self::CONFIG_PATH_ORIGIN_CONFIGURED);
     }
 
     public function getModuleVersion()

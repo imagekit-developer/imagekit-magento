@@ -3,7 +3,7 @@
 namespace ImageKit\ImageKitMagento\Plugin\Helper;
 
 use ImageKit\ImageKitMagento\Core\ConfigurationInterface;
-use ImageKit\ImageKitMagento\Core\ImageKitClient;
+use ImageKit\ImageKitMagento\Core\ImageKitImageProvider;
 use Magento\Catalog\Helper\Image as CatalogImageHelper;
 
 class Image
@@ -11,7 +11,7 @@ class Image
 
     private $configuration;
 
-    private $imageKitClient;
+    private $imageKitImageProvider;
 
     private $product;
 
@@ -21,10 +21,10 @@ class Image
 
     private $keepFrame;
 
-    public function __construct(ConfigurationInterface $configuration, ImageKitClient $imageKitClient)
+    public function __construct(ConfigurationInterface $configuration, ImageKitImageProvider $imageKitImageProvider)
     {
         $this->configuration = $configuration;
-        $this->imageKitClient = $imageKitClient;
+        $this->imageKitImageProvider = $imageKitImageProvider;
     }
 
     public function beforeInit(CatalogImageHelper $helper, $product, $imageId, $attributes = [])
@@ -62,15 +62,10 @@ class Image
         }
 
         $imagePath = $this->imageFile ?: $this->product->getData($helper->getType());
-        $image = $this->configuration->getPath(sprintf('catalog/product%s', $imagePath));
+        $image = sprintf('catalog/product%s', $imagePath);
         $this->createTransformation($helper);
 
-        return $this->imageKitClient->getClient()->url(
-            [
-                "path" => $image,
-                "transformation" => [$this->transformations]
-            ]
-        );
+        return $this->imageKitImageProvider->retrieveTransformed($image, [$this->transformations], $originalMethod());
     }
 
     private function createTransformation(CatalogImageHelper $helper)

@@ -9,4 +9,7 @@
   <type name="Magento\Cms\Block\Adminhtml\Wysiwyg\Images\Content">
     <plugin name="add_imagekit_button" type="ImageKit\ImageKitMagento\Plugin\AddFromImageKitButton"/>
   </type>
+
+  <preference for="Magento\Catalog\Block\Adminhtml\Product\Helper\Form\Gallery\Content" type="ImageKit\ImageKitMagento\Block\Adminhtml\Product\Helper\Form\Gallery\Content" />
+
 </config>

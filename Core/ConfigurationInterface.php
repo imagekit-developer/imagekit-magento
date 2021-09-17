@@ -28,6 +28,11 @@ interface ConfigurationInterface
     /**
      * @return string
      */
+    public function isOriginConfigured();
+
+    /**
+     * @return string
+     */
     public function getMediaBaseUrl();
 
     /**

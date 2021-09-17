@@ -3,7 +3,7 @@
 namespace ImageKit\ImageKitMagento\Plugin\Catalog\Model\Product\Image;
 
 use ImageKit\ImageKitMagento\Core\ConfigurationInterface;
-use ImageKit\ImageKitMagento\Core\ImageKitClient;
+use ImageKit\ImageKitMagento\Core\ImageKitImageProvider;
 use Magento\Catalog\Model\Product\Image\UrlBuilder as ImageUrlBuilder;
 use Magento\Catalog\Helper\Image as CatalogImageHelper;
 use Magento\Framework\ObjectManagerInterface;
@@ -17,7 +17,7 @@ class UrlBuilder
 
     private $configuration;
 
-    private $imageKitClient;
+    private $imagekitImageProvider;
 
     private $imageParamsBuilder;
 
@@ -25,12 +25,12 @@ class UrlBuilder
         ObjectManagerInterface $objectManager,
         ConfigInterface $presentationConfig,
         ConfigurationInterface $configuration,
-        ImageKitClient $imageKitClient
+        ImageKitImageProvider $imagekitImageProvider
     ) {
         $this->objectManager = $objectManager;
         $this->presentationConfig = $presentationConfig;
         $this->configuration = $configuration;
-        $this->imageKitClient = $imageKitClient;
+        $this->imagekitImageProvider = $imagekitImageProvider;
     }
 
     public function aroundGetUrl(
@@ -75,15 +75,10 @@ class UrlBuilder
                 );
                 $imagePath = preg_replace('/\/catalog\/product\/cache\/[a-f0-9]{32}\//', '/', $imagePath);
 
-                $image = $this->configuration->getPath(sprintf('catalog/product%s', $imagePath));
+                $image = sprintf('catalog/product%s', $imagePath);
                 $transformations = $this->createTransformation($imageMiscParams);
 
-                $url = $this->imageKitClient->getClient()->url(
-                    [
-                        "path" => $image,
-                        "transformation" => [$transformations]
-                    ]
-                );
+                $url = $this->imagekitImageProvider->retrieveTransformed($image, [$transformations], $proceed($baseFilePath, $imageDisplayArea));
             }
         } catch (\Exception $e) {
             $url = $proceed($baseFilePath, $imageDisplayArea);

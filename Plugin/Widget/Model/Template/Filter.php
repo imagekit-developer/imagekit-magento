@@ -3,7 +3,7 @@
 namespace ImageKit\ImageKitMagento\Plugin\Widget\Model\Template;
 
 use ImageKit\ImageKitMagento\Core\ConfigurationInterface;
-use ImageKit\ImageKitMagento\Core\ImageKitClient;
+use ImageKit\ImageKitMagento\Core\ImageKitImageProvider;
 use ImageKit\ImageKitMagento\Model\Template\Filter as ImageKitWidgetFilter;
 
 class Filter
@@ -12,16 +12,16 @@ class Filter
 
     private $imagekitWidgetFilter;
 
-    private $imageKitClient;
+    private $imageKitImageProvider;
 
     public function __construct(
         ConfigurationInterface $configuration,
         ImageKitWidgetFilter $imagekitWidgetFilter,
-        ImageKitClient $imageKitClient
+        ImageKitImageProvider $imageKitImageProvider
     ) {
         $this->configuration = $configuration;
         $this->imagekitWidgetFilter = $imagekitWidgetFilter;
-        $this->imageKitClient = $imageKitClient;
+        $this->imageKitImageProvider = $imageKitImageProvider;
     }
 
     public function aroundMediaDirective(
@@ -42,12 +42,8 @@ class Filter
         $url = (preg_match('/^&quot;.+&quot;$/', $params['url'])) ?
             preg_replace('/(^&quot;)|(&quot;$)/', '', $params['url']) : $params['url'];
 
-        $image = $this->configuration->getPath($url);
+        $original_url = $proceed($construction);
 
-        return $this->imageKitClient->getClient()->url(
-            [
-                "path" => $image,
-            ]
-        );
+        return $this->imageKitImageProvider->retrieve($url, $original_url);
     }
 }

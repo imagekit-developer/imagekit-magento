@@ -3,7 +3,7 @@
 namespace ImageKit\ImageKitMagento\Plugin\Catalog\Block\Product;
 
 use ImageKit\ImageKitMagento\Core\ConfigurationInterface;
-use ImageKit\ImageKitMagento\Core\ImageKitClient;
+use ImageKit\ImageKitMagento\Core\ImageKitImageProvider;
 use Magento\Catalog\Block\Product\ImageFactory as ProductImageFactory;
 use Magento\Catalog\Helper\Image as CatalogImageHelper;
 use Magento\Framework\ObjectManagerInterface;
@@ -17,7 +17,7 @@ class ImageFactory
 
     private $configuration;
 
-    private $imageKitClient;
+    private $imageKitImageProvider;
 
     private $imageParamsBuilder;
 
@@ -25,12 +25,12 @@ class ImageFactory
         ObjectManagerInterface $objectManager,
         ConfigInterface $presentationConfig,
         ConfigurationInterface $configuration,
-        ImageKitClient $imageKitClient
+        ImageKitImageProvider $imageKitImageProvider
     ) {
         $this->objectManager = $objectManager;
         $this->presentationConfig = $presentationConfig;
         $this->configuration = $configuration;
-        $this->imageKitClient = $imageKitClient;
+        $this->imageKitImageProvider = $imageKitImageProvider;
     }
 
     public function aroundCreate(
@@ -72,15 +72,10 @@ class ImageFactory
                 );
                 $imagePath = preg_replace('/\/catalog\/product\/cache\/[a-f0-9]{32}\//', '/', $imagePath);
 
-                $image = $this->configuration->getPath(sprintf('catalog/product%s', $imagePath));
+                $image = sprintf('catalog/product%s', $imagePath);
                 $transformations = $this->createTransformation($imageMiscParams);
 
-                $generatedImageUrl = $this->imageKitClient->getClient()->url(
-                    [
-                        "path" => $image,
-                        "transformation" => [$transformations]
-                    ]
-                );
+                $generatedImageUrl = $this->imageKitImageProvider->retrieveTransformed($image, [$transformations], $imageBlock->getImageUrl());
 
                 $imageBlock->setOriginalImageUrl($imageBlock->setImageUrl());
                 $imageBlock->setImageUrl($generatedImageUrl);

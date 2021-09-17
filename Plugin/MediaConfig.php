@@ -3,18 +3,18 @@
 namespace ImageKit\ImageKitMagento\Plugin;
 
 use ImageKit\ImageKitMagento\Core\ConfigurationInterface;
-use ImageKit\ImageKitMagento\Core\ImageKitClient;
+use ImageKit\ImageKitMagento\Core\ImageKitImageProvider;
 use Magento\Catalog\Model\Product\Media\Config as CatalogMediaConfig;
 
 class MediaConfig
 {
-    private $imageKitClient;
+    private $imageKitImageProvider;
 
     private $configuration;
 
-    public function __construct(ImageKitClient $imageKitClient, ConfigurationInterface $configuration)
+    public function __construct(ImageKitImageProvider $imageKitImageProvider, ConfigurationInterface $configuration)
     {
-        $this->imageKitClient = $imageKitClient;
+        $this->imageKitImageProvider = $imageKitImageProvider;
         $this->configuration = $configuration;
     }
 
@@ -24,12 +24,8 @@ class MediaConfig
             return $originalMethod($file);
         }
 
-        $image = $this->configuration->getPath($mediaConfig->getBaseMediaPath() . $file);
+        $image = $mediaConfig->getBaseMediaPath() . $file;
 
-        return $this->imageKitClient->getClient()->url(
-            [
-                "path" => $image,
-            ]
-        );
+        return $this->imageKitImageProvider->retrieve($image, $originalMethod($file));
     }
 }

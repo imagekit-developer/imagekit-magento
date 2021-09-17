@@ -2,7 +2,7 @@
 
 namespace ImageKit\ImageKitMagento\Controller\Adminhtml\Cms\Wysiwyg\Images;
 
-use ImageKit\ImageKitMagento\Core\ConfigurationInterface;
+use ImageKit\ImageKitMagento\Model\LibraryMapFactory;
 use Magento\Backend\App\Action\Context;
 use Magento\Catalog\Model\Product\Media\Config;
 use Magento\Cms\Block\Adminhtml\Wysiwyg\Images\Tree;
@@ -20,6 +20,8 @@ use Magento\Framework\Validator\AllowedProtocols;
 use Magento\MediaStorage\Model\File\Validator\NotProtectedExtension;
 use Magento\MediaStorage\Model\ResourceModel\File\Storage\File;
 use Magento\Cms\Controller\Adminhtml\Wysiwyg\Images\Upload as ImagesUpload;
+use Magento\Framework\Data\Form\Element\Editor;
+use Magento\Framework\File\Uploader;
 
 class Upload extends ImagesUpload
 {
@@ -77,19 +79,12 @@ class Upload extends ImagesUpload
     private $extensionValidator;
 
     /**
-     * @var ConfigurationInterface
-     */
-    private $configuration;
-
-    /**
      * @var FileIo
      */
     private $file;
 
-    /**
-     * @var Tree
-     */
-    private $tree;
+
+    private $libraryMapFactory;
 
     public function __construct(
         Context $context,
@@ -104,9 +99,9 @@ class Upload extends ImagesUpload
         File $fileUtility,
         AllowedProtocols $protocolValidator,
         NotProtectedExtension $extensionValidator,
-        ConfigurationInterface $configuration,
         FileIo $file,
-        Tree $tree
+        Editor $editor,
+        LibraryMapFactory $libraryMapFactory
     ) {
         parent::__construct($context, $coreRegistry, $resultJsonFactory, $directoryResolver);
         $this->directoryList = $directoryList;
@@ -117,9 +112,9 @@ class Upload extends ImagesUpload
         $this->fileUtility = $fileUtility;
         $this->extensionValidator = $extensionValidator;
         $this->protocolValidator = $protocolValidator;
-        $this->configuration = $configuration;
         $this->file = $file;
-        $this->tree = $tree;
+        $this->editor = $editor;
+        $this->libraryMapFactory = $libraryMapFactory;
     }
 
     public function execute()
@@ -133,14 +128,23 @@ class Upload extends ImagesUpload
                 );
             }
             $fileData = $this->getRequest()->getParam('file');
+
+            $localFileName = $fileData['name'];
             $this->remoteFileUrl = $fileData['url'];
             $this->validateRemoteFile();
-            $localFilePath = $path .  $fileData['filePath'];
+
+            $localFileName = Uploader::getCorrectFileName($localFileName);
+            $localFilePath = $this->appendNewFileName($path . DIRECTORY_SEPARATOR . $localFileName);
             $this->validateRemoteFileExtensions($localFilePath);
+
             $this->retrieveRemoteImage($this->remoteFileUrl, $localFilePath);
+            $this->getStorage()->resizeFile($localFilePath, true);
+
             $this->imageAdapter->validateUploadFile($localFilePath);
 
             $result = $this->appendResultSaveRemoteImage($localFilePath);
+            
+            $this->saveMapping($localFilePath, $fileData['filePath']);
         } catch (\Exception $e) {
             $result = ['error' => $e->getMessage(), 'errorcode' => $e->getCode(), 'trace' => $e->getTraceAsString()];
         }
@@ -201,7 +205,29 @@ class Upload extends ImagesUpload
         $result['size'] = filesize($filePath); // phpcs:ignore Magento2.Functions.DiscouragedFunction.Discouraged
         $result['url'] = $this->getRequest()->getParam('remote_image');
         $result['file'] = $filePath;
-        $result['tree_options'] = $this->tree->getTreeWidgetOptions()['folderTree'];
         return $result;
+    }
+
+    protected function appendNewFileName($localFilePath)
+    {
+        $filename = Uploader::getNewFileName($localFilePath);
+        $fileInfo = $this->file->getPathInfo($localFilePath);
+        return $fileInfo['dirname'] . DIRECTORY_SEPARATOR . $filename;
+    }
+
+    protected function saveMapping($localFilePath, $remoteFilePath)
+    {
+
+        return $this->libraryMapFactory
+            ->create()
+            ->setImagePath(
+                str_replace(
+                    $this->fileSystem->getDirectoryRead(DirectoryList::MEDIA)->getAbsolutePath(),
+                    '',
+                    $localFilePath
+                )
+            )
+            ->setIkPath($remoteFilePath)
+            ->save();
     }
 }
