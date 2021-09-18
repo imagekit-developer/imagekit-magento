@@ -26,8 +26,6 @@ class RetrieveImage extends \Magento\Backend\App\Action
 
     private $remoteFileUrl;
 
-    private $configuration;
-
     private $resultRawFactory;
 
     private $protocolValidator;
@@ -50,7 +48,6 @@ class RetrieveImage extends \Magento\Backend\App\Action
 
     public function __construct(
         Context $context,
-        ConfigurationInterface $configuration,
         ResultRawFactory $resultRawFactory,
         AllowedProtocols $protocolValidator,
         ProductMediaConfig $productMediaConfig,
@@ -63,7 +60,6 @@ class RetrieveImage extends \Magento\Backend\App\Action
         LibraryMapFactory $libraryMapFactory
     ) {
         parent::__construct($context);
-        $this->configuration = $configuration;
         $this->resultRawFactory = $resultRawFactory;
         $this->protocolValidator = $protocolValidator;
         $this->productMediaConfig = $productMediaConfig;

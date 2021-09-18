@@ -81,15 +81,21 @@ class Configuration implements ConfigurationInterface
         return $this->configReader->getValue(self::CONFIG_PATH_ENDPOINT);
     }
 
+    // Public key and Private key are required for ImageKit PHP SDK 1.2.2.
+    // Planned to remove this requirement in future SDK Updates
+
+    // Provision to get Public key from User provided for future updates
     public function getPublicKey()
     {
-        return "public_key_not_required";
+        return "dummy_public_key";
         // return $this->configReader->getValue(self::CONFIG_PATH_PUBLIC_KEY);
     }
 
+    // Provision to get Private key from User provided for future updates
     public function getPrivateKey()
     {
-        return $this->configReader->getValue(self::CONFIG_PATH_PRIVATE_KEY);
+        return "dummy_private_key";
+        // return $this->configReader->getValue(self::CONFIG_PATH_PRIVATE_KEY);
     }
 
     public function isOriginConfigured()

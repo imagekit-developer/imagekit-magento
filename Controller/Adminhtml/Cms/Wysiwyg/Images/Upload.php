@@ -2,10 +2,10 @@
 
 namespace ImageKit\ImageKitMagento\Controller\Adminhtml\Cms\Wysiwyg\Images;
 
+use ImageKit\ImageKitMagento\Core\ConfigurationInterface;
 use ImageKit\ImageKitMagento\Model\LibraryMapFactory;
 use Magento\Backend\App\Action\Context;
 use Magento\Catalog\Model\Product\Media\Config;
-use Magento\Cms\Block\Adminhtml\Wysiwyg\Images\Tree;
 use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\App\Filesystem\DirectoryResolver;
 use Magento\Framework\Controller\Result\JsonFactory;
