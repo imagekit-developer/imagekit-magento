@@ -133,6 +133,7 @@ class Upload extends ImagesUpload
             $this->remoteFileUrl = $fileData['url'];
             $this->validateRemoteFile();
 
+            $localFileName = $this->addFallbackExtension($localFileName, $fileData);
             $localFileName = Uploader::getCorrectFileName($localFileName);
             $localFilePath = $this->appendNewFileName($path . DIRECTORY_SEPARATOR . $localFileName);
             $this->validateRemoteFileExtensions($localFilePath);
@@ -152,6 +153,19 @@ class Upload extends ImagesUpload
         $resultJson = $this->resultJsonFactory->create();
 
         return $resultJson->setData($result);
+    }
+
+    private function addFallbackExtension($localFileName, $fileData) {
+        $fileType = $fileData['fileType'];
+        
+        if ($fileType === "image") {
+            $pathInfo = $this->file->getPathInfo($localFileName);
+            if (!isset($pathInfo['extension'])) {
+                $localFileName = $localFileName.".jpg";
+            }
+        }
+
+        return $localFileName;
     }
 
     private function validateRemoteFile()

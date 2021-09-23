@@ -80,6 +80,7 @@ class RetrieveImage extends \Magento\Backend\App\Action
             $this->remoteFileUrl = $fileData['url'];
             $this->validateRemoteFile();
             $baseTmpMediaPath = $this->getBaseTmpMediaPath();
+            $localFileName = $this->addFallbackExtension($localFileName, $fileData);
             $localFilePath = $this->getLocalTmpFileName($localFileName);
             $localFilePath = $this->appendNewFileName($baseTmpMediaPath . $localFilePath);
 
@@ -103,6 +104,19 @@ class RetrieveImage extends \Magento\Backend\App\Action
         $response->setHeader('Content-type', 'text/plain');
         $response->setContents(json_encode($result));
         return $response;
+    }
+
+    private function addFallbackExtension($localFileName, $fileData) {
+        $fileType = $fileData['fileType'];
+        
+        if ($fileType === "image") {
+            $extension = pathinfo($localFileName, PATHINFO_EXTENSION);
+            if (!$extension) {
+                $localFileName = $localFileName.".jpg";
+            }
+        }
+
+        return $localFileName;
     }
 
     protected function getBaseTmpMediaPath()

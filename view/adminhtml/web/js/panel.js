@@ -90,7 +90,7 @@ define([
         closed: function () {
           $(ikMLContainer).empty()
         }
-      }).bind(this);
+      });
 
       return this;
     },
