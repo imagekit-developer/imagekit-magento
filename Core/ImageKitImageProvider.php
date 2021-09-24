@@ -24,9 +24,6 @@ class ImageKitImageProvider implements ImageProviderInterface
 
     public function retrieveTransformed(string $image, array $transformations, string $originalUrl)
     {
-        if (!$this->configuration->isOriginConfigured()) {
-            return $originalUrl;
-        }
 
         if ($transformations === null || empty($transformations)) {
             $transformations = [];
@@ -42,9 +39,13 @@ class ImageKitImageProvider implements ImageProviderInterface
                 ->getFirstItem();
             if ($mapped->getIkPath()) {
                 $image = $mapped->getIkPath();
+            } elseif (!$this->configuration->isOriginConfigured()) {
+                return $originalUrl;
             } else {
                 $image = $this->configuration->getPath($image);
             }
+        } elseif (!$this->configuration->isOriginConfigured()) {
+            return $originalUrl;
         } else {
             $image = $this->configuration->getPath($image);
         }
