@@ -41,4 +41,17 @@ interface ConfigurationInterface
      * @return string
      */
     public function getPath($file);
+
+    /**
+     * @return string
+     */
+    public function generateIkuniqid();
+
+    /**
+     * @param string $filename
+     * @param string $uniqid
+     * 
+     * @return string
+     */
+    public function addUniquePrefixToBasename($filename, $uniqid);
 }

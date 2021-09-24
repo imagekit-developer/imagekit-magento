@@ -120,4 +120,15 @@ class Configuration implements ConfigurationInterface
     {
         return $this->storeManager->getStore()->getBaseUrl(UrlInterface::URL_TYPE_MEDIA);
     }
+
+    public function generateIkuniqid()
+    {
+        return strtolower(uniqid(self::IK_UNIQ_PREFIX)) . '_';
+    }
+
+    public function addUniquePrefixToBasename($filename, $uniqid = null)
+    {
+        $uniqid = $uniqid ? $uniqid : $this->generateCLDuniqid();
+        return dirname($filename) . '/' . $uniqid . basename($filename);
+    }
 }

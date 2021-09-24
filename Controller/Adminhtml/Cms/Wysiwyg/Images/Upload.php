@@ -84,6 +84,8 @@ class Upload extends ImagesUpload
 
     private $libraryMap;
 
+    private $configuration;
+
     public function __construct(
         Context $context,
         Registry $coreRegistry,
@@ -98,7 +100,8 @@ class Upload extends ImagesUpload
         AllowedProtocols $protocolValidator,
         NotProtectedExtension $extensionValidator,
         FileIo $file,
-        LibraryMapFactory $libraryMapFactory
+        LibraryMapFactory $libraryMapFactory,
+        ConfigurationInterface $configuration
     ) {
         parent::__construct($context, $coreRegistry, $resultJsonFactory, $directoryResolver);
         $this->directoryList = $directoryList;
@@ -111,6 +114,7 @@ class Upload extends ImagesUpload
         $this->protocolValidator = $protocolValidator;
         $this->file = $file;
         $this->libraryMap = $libraryMapFactory->create();
+        $this->configuration = $configuration;
     }
 
     public function execute()
@@ -130,6 +134,8 @@ class Upload extends ImagesUpload
             $this->validateRemoteFile();
 
             $localFileName = $this->addFallbackExtension($localFileName, $fileData);
+            $ikUniqId = $this->configuration->generateIkuniqid();
+            $localFileName = $this->configuration->addUniquePrefixToBasename($localFileName, $ikUniqId);
             $localFileName = Uploader::getCorrectFileName($localFileName);
             $localFilePath = $this->appendNewFileName($path . DIRECTORY_SEPARATOR . $localFileName);
             $this->validateRemoteFileExtensions($localFilePath);
@@ -141,7 +147,7 @@ class Upload extends ImagesUpload
 
             $result = $this->appendResultSaveRemoteImage($localFilePath);
 
-            $this->saveMapping($localFilePath, $fileData['filePath']);
+            $this->saveMapping($ikUniqId, $fileData['filePath']);
         } catch (\Exception $e) {
             $result = ['error' => $e->getMessage(), 'errorcode' => $e->getCode(), 'trace' => $e->getTraceAsString()];
         }
@@ -228,17 +234,6 @@ class Upload extends ImagesUpload
 
     protected function saveMapping($localFilePath, $remoteFilePath)
     {
-        $image = $this
-            ->libraryMap
-            ->getCollection()
-            ->addFieldToFilter('image_path', $localFilePath)
-            ->setPageSize(1)
-            ->getFirstItem();
-
-        if ($image->getIkPath()) {
-            return $image->setIkPath($remoteFilePath)->save();
-        }
-
         return $this->libraryMap->setImagePath(
             str_replace(
                 $this->fileSystem->getDirectoryRead(DirectoryList::MEDIA)->getAbsolutePath(),

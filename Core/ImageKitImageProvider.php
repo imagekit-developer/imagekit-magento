@@ -24,20 +24,27 @@ class ImageKitImageProvider implements ImageProviderInterface
 
     public function retrieveTransformed(string $image, array $transformations, string $originalUrl)
     {
-        if ($transformations !== null || empty($transformations)) {
+        if (!$this->configuration->isOriginConfigured()) {
+            return $originalUrl;
+        }
+
+        if ($transformations === null || empty($transformations)) {
             $transformations = [];
         }
-        $mapped = $this->libraryMapFactory
-            ->create()
-            ->getCollection()
-            ->addFieldToFilter('image_path', $image)
-            ->setPageSize(1)
-            ->getFirstItem();
-            
-        if ($mapped->getIkPath()) {
-            $image = $mapped->getIkPath();
-        } elseif (!$this->configuration->isOriginConfigured()) {
-            return $originalUrl;
+
+        preg_match('/(ik_[A-Za-z0-9]{13}_).+$/i', $image, $ikUniqid);
+        if ($ikUniqid && isset($ikUniqid[1])) {
+            $mapped = $this->libraryMapFactory
+                ->create()
+                ->getCollection()
+                ->addFieldToFilter('image_path', $ikUniqid)
+                ->setPageSize(1)
+                ->getFirstItem();
+            if ($mapped->getIkPath()) {
+                $image = $mapped->getIkPath();
+            } else {
+                $image = $this->configuration->getPath($image);
+            }
         } else {
             $image = $this->configuration->getPath($image);
         }

@@ -46,6 +46,8 @@ class RetrieveImage extends \Magento\Backend\App\Action
 
     private $libraryMap;
 
+    private $configuration;
+
     public function __construct(
         Context $context,
         ResultRawFactory $resultRawFactory,
@@ -57,7 +59,8 @@ class RetrieveImage extends \Magento\Backend\App\Action
         FileUtility $fileUtility,
         ImageAdapterFactory $imageAdapterFactory,
         StoreManagerInterface $storeManager,
-        LibraryMapFactory $libraryMapFactory
+        LibraryMapFactory $libraryMapFactory,
+        ConfigurationInterface $configuration
     ) {
         parent::__construct($context);
         $this->resultRawFactory = $resultRawFactory;
@@ -70,6 +73,7 @@ class RetrieveImage extends \Magento\Backend\App\Action
         $this->imageAdapter = $imageAdapterFactory->create();
         $this->storeManager = $storeManager;
         $this->libraryMap = $libraryMapFactory->create();
+        $this->configuration = $configuration;
     }
 
     public function execute()
@@ -81,6 +85,8 @@ class RetrieveImage extends \Magento\Backend\App\Action
             $this->validateRemoteFile();
             $baseTmpMediaPath = $this->getBaseTmpMediaPath();
             $localFileName = $this->addFallbackExtension($localFileName, $fileData);
+            $ikUniqId = $this->configuration->generateIkuniqid();
+            $localFileName = $this->configuration->addUniquePrefixToBasename($localFileName, $ikUniqId);
             $localFilePath = $this->getLocalTmpFileName($localFileName);
             $localFilePath = $this->appendNewFileName($baseTmpMediaPath . $localFilePath);
 
@@ -90,7 +96,7 @@ class RetrieveImage extends \Magento\Backend\App\Action
             $this->imageAdapter->validateUploadFile($localFileFullPath);
             $result = $this->appendResultSaveRemoteImage($localFilePath, $baseTmpMediaPath);
             
-            $this->saveMapping(sprintf('catalog/product%s', $result['file']), $fileData['filePath']);
+            $this->saveMapping($ikUniqId, $fileData['filePath']);
 
         } catch (\Exception $e) {
             $result = ['error' => $e->getMessage(), 'errorcode' => $e->getCode()];
@@ -201,18 +207,6 @@ class RetrieveImage extends \Magento\Backend\App\Action
 
     protected function saveMapping($localFilePath, $remoteFilePath)
     {
-        $image = $this
-            ->libraryMap
-            ->getCollection()
-            ->addFieldToFilter('image_path', $localFilePath)
-            ->setPageSize(1)
-            ->getFirstItem();
-        
-        if ($image->getIkPath()) {
-            $image->setIkPath($remoteFilePath);
-            return $image->save();
-        }
-
         return $this->libraryMap
             ->setImagePath(
                 str_replace(
