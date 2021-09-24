@@ -13,7 +13,7 @@
       "email": "me@abhinavdhiman.co"
     }
   ],
-  "minimum-stability": "dev",
+  "minimum-stability": "stable",
   "require": {
     "imagekit/imagekit": "^1.2.2"
   },
