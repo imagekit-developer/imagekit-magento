@@ -3,7 +3,6 @@
 // Magento Colllection for LibraryMap
 namespace ImageKit\ImageKitMagento\Model\ResourceModel\LibraryMap;
 
-
 class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection
 {
     /**

@@ -20,7 +20,6 @@ use Magento\Framework\Validator\AllowedProtocols;
 use Magento\MediaStorage\Model\File\Validator\NotProtectedExtension;
 use Magento\MediaStorage\Model\ResourceModel\File\Storage\File;
 use Magento\Cms\Controller\Adminhtml\Wysiwyg\Images\Upload as ImagesUpload;
-use Magento\Framework\Data\Form\Element\Editor;
 use Magento\Framework\File\Uploader;
 
 class Upload extends ImagesUpload
@@ -100,7 +99,6 @@ class Upload extends ImagesUpload
         AllowedProtocols $protocolValidator,
         NotProtectedExtension $extensionValidator,
         FileIo $file,
-        Editor $editor,
         LibraryMapFactory $libraryMapFactory
     ) {
         parent::__construct($context, $coreRegistry, $resultJsonFactory, $directoryResolver);
@@ -113,7 +111,6 @@ class Upload extends ImagesUpload
         $this->extensionValidator = $extensionValidator;
         $this->protocolValidator = $protocolValidator;
         $this->file = $file;
-        $this->editor = $editor;
         $this->libraryMap = $libraryMapFactory->create();
     }
 

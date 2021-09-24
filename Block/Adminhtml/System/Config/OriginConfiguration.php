@@ -12,7 +12,6 @@ class OriginConfiguration extends Field
 {
     protected $storeManager;
 
-
     public function __construct(Context $context, StoreManagerInterface $storeManager, array $data = [])
     {
         parent::__construct($context, $data);

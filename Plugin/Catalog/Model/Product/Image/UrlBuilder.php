@@ -78,7 +78,11 @@ class UrlBuilder
                 $image = sprintf('catalog/product%s', $imagePath);
                 $transformations = $this->createTransformation($imageMiscParams);
 
-                $url = $this->imagekitImageProvider->retrieveTransformed($image, [$transformations], $proceed($baseFilePath, $imageDisplayArea));
+                $url = $this->imagekitImageProvider->retrieveTransformed(
+                    $image,
+                    [$transformations],
+                    $proceed($baseFilePath, $imageDisplayArea)
+                );
             }
         } catch (\Exception $e) {
             $url = $proceed($baseFilePath, $imageDisplayArea);

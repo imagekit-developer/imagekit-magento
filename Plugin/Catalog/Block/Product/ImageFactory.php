@@ -75,7 +75,11 @@ class ImageFactory
                 $image = sprintf('catalog/product%s', $imagePath);
                 $transformations = $this->createTransformation($imageMiscParams);
 
-                $generatedImageUrl = $this->imageKitImageProvider->retrieveTransformed($image, [$transformations], $imageBlock->getImageUrl());
+                $generatedImageUrl = $this->imageKitImageProvider->retrieveTransformed(
+                    $image,
+                    [$transformations],
+                    $imageBlock->getImageUrl()
+                );
 
                 $imageBlock->setOriginalImageUrl($imageBlock->setImageUrl());
                 $imageBlock->setImageUrl($generatedImageUrl);
