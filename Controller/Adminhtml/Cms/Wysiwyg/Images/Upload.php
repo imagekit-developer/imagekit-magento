@@ -84,7 +84,7 @@ class Upload extends ImagesUpload
     private $file;
 
 
-    private $libraryMapFactory;
+    private $libraryMap;
 
     public function __construct(
         Context $context,
@@ -114,7 +114,7 @@ class Upload extends ImagesUpload
         $this->protocolValidator = $protocolValidator;
         $this->file = $file;
         $this->editor = $editor;
-        $this->libraryMapFactory = $libraryMapFactory;
+        $this->libraryMap = $libraryMapFactory->create();
     }
 
     public function execute()
@@ -232,9 +232,14 @@ class Upload extends ImagesUpload
     protected function saveMapping($localFilePath, $remoteFilePath)
     {
 
-        return $this->libraryMapFactory
-            ->create()
-            ->setImagePath(
+        $image = $this->libraryMap->getCollection()->addFieldToFilter('image_path', $localFilePath)->setPageSize(1)->getFirstItem();
+
+        if ($image->getIkPath()) {
+            $image->setIkPath($remoteFilePath);
+            return $image->save();
+        }
+
+        return $this->libraryMap->setImagePath(
                 str_replace(
                     $this->fileSystem->getDirectoryRead(DirectoryList::MEDIA)->getAbsolutePath(),
                     '',

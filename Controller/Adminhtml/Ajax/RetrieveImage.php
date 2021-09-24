@@ -201,6 +201,13 @@ class RetrieveImage extends \Magento\Backend\App\Action
     protected function saveMapping($localFilePath, $remoteFilePath)
     {
 
+        $image = $this->libraryMap->getCollection()->addFieldToFilter('image_path', $localFilePath)->setPageSize(1)->getFirstItem();
+        
+        if ($image->getIkPath()) {
+            $image->setIkPath($remoteFilePath);
+            return $image->save();
+        }
+
         return $this->libraryMap
             ->setImagePath(
                 str_replace(
