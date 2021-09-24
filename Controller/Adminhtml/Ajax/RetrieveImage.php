@@ -106,7 +106,8 @@ class RetrieveImage extends \Magento\Backend\App\Action
         return $response;
     }
 
-    private function addFallbackExtension($localFileName, $fileData) {
+    private function addFallbackExtension($localFileName, $fileData)
+    {
         $fileType = $fileData['fileType'];
         
         if ($fileType === "image") {
@@ -200,8 +201,12 @@ class RetrieveImage extends \Magento\Backend\App\Action
 
     protected function saveMapping($localFilePath, $remoteFilePath)
     {
-
-        $image = $this->libraryMap->getCollection()->addFieldToFilter('image_path', $localFilePath)->setPageSize(1)->getFirstItem();
+        $image = $this
+            ->libraryMap
+            ->getCollection()
+            ->addFieldToFilter('image_path', $localFilePath)
+            ->setPageSize(1)
+            ->getFirstItem();
         
         if ($image->getIkPath()) {
             $image->setIkPath($remoteFilePath);

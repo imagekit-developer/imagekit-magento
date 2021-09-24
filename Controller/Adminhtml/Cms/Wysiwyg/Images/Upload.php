@@ -82,7 +82,6 @@ class Upload extends ImagesUpload
      */
     private $file;
 
-
     private $libraryMap;
 
     public function __construct(
@@ -141,7 +140,7 @@ class Upload extends ImagesUpload
             $this->imageAdapter->validateUploadFile($localFilePath);
 
             $result = $this->appendResultSaveRemoteImage($localFilePath);
-            
+
             $this->saveMapping($localFilePath, $fileData['filePath']);
         } catch (\Exception $e) {
             $result = ['error' => $e->getMessage(), 'errorcode' => $e->getCode(), 'trace' => $e->getTraceAsString()];
@@ -152,13 +151,14 @@ class Upload extends ImagesUpload
         return $resultJson->setData($result);
     }
 
-    private function addFallbackExtension($localFileName, $fileData) {
+    private function addFallbackExtension($localFileName, $fileData)
+    {
         $fileType = $fileData['fileType'];
-        
+
         if ($fileType === "image") {
             $pathInfo = $this->file->getPathInfo($localFileName);
             if (!isset($pathInfo['extension'])) {
-                $localFileName = $localFileName.".jpg";
+                $localFileName = $localFileName . ".jpg";
             }
         }
 
@@ -228,21 +228,24 @@ class Upload extends ImagesUpload
 
     protected function saveMapping($localFilePath, $remoteFilePath)
     {
-
-        $image = $this->libraryMap->getCollection()->addFieldToFilter('image_path', $localFilePath)->setPageSize(1)->getFirstItem();
+        $image = $this
+            ->libraryMap
+            ->getCollection()
+            ->addFieldToFilter('image_path', $localFilePath)
+            ->setPageSize(1)
+            ->getFirstItem();
 
         if ($image->getIkPath()) {
-            $image->setIkPath($remoteFilePath);
-            return $image->save();
+            return $image->setIkPath($remoteFilePath)->save();
         }
 
         return $this->libraryMap->setImagePath(
-                str_replace(
-                    $this->fileSystem->getDirectoryRead(DirectoryList::MEDIA)->getAbsolutePath(),
-                    '',
-                    $localFilePath
-                )
+            str_replace(
+                $this->fileSystem->getDirectoryRead(DirectoryList::MEDIA)->getAbsolutePath(),
+                '',
+                $localFilePath
             )
+        )
             ->setIkPath($remoteFilePath)
             ->save();
     }

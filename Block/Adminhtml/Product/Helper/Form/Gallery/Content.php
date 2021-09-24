@@ -14,8 +14,13 @@ class Content extends GalleryContent
 
     protected $configuration;
 
-    public function __construct(Context $context, EncoderInterface $jsonEncoder, Config $mediaConfig, ConfigurationInterface $configuration, array $data = [])
-    {
+    public function __construct(
+        Context $context,
+        EncoderInterface $jsonEncoder,
+        Config $mediaConfig,
+        ConfigurationInterface $configuration,
+        array $data = []
+    ) {
         parent::__construct($context, $jsonEncoder, $mediaConfig, $data);
         $this->configuration = $configuration;
     }

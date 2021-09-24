@@ -24,7 +24,7 @@ class ImageKitImageProvider implements ImageProviderInterface
 
     public function retrieveTransformed(string $image, array $transformations, string $originalUrl)
     {
-        if (is_null($transformations) || empty($transformations)) {
+        if ($transformations !== null || empty($transformations)) {
             $transformations = [];
         }
         $mapped = $this->libraryMapFactory
