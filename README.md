@@ -9,7 +9,7 @@ Before you install the extension, make sure you have a ImageKit account. You can
 You can install it via composer by running the following commands under your Magento 2 root dir:
 
 ```
-composer require imagekit/imagekit-magento2
+composer require imagekit/imagekit-magento
 php bin/magento maintenance:enable
 php bin/magento setup:upgrade
 php bin/magento setup:di:compile
