@@ -128,7 +128,11 @@ class Configuration implements ConfigurationInterface
 
     public function addUniquePrefixToBasename($filename, $uniqid = null)
     {
-        $uniqid = $uniqid ? $uniqid : $this->generateCLDuniqid();
+        $uniqid = $uniqid ? $uniqid : $this->generateIkuniqid();
+
+        if (dirname($filename) === '.') {
+            return $uniqid . basename($filename);    
+        }
         return dirname($filename) . '/' . $uniqid . basename($filename);
     }
 }
