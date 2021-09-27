@@ -1,4 +1,15 @@
+[<img width="250" alt="ImageKit.io" src="https://raw.githubusercontent.com/imagekit-developer/imagekit-javascript/master/assets/imagekit-light-logo.svg"/>](https://imagekit.io)
+
 # ImageKit Magento 2 Extension
+
+[![Packagist](https://img.shields.io/packagist/v/imagekit/imagekit-magento.svg)](https://packagist.org/packages/imagekit/imagekit-magento) 
+[![Packagist](https://img.shields.io/packagist/dt/imagekit/imagekit-magento.svg)](https://packagist.org/packages/imagekit/imagekit-magento) 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Twitter Follow](https://img.shields.io/twitter/follow/imagekitio?label=Follow&style=social)](https://twitter.com/ImagekitIo)
+
+[![M2 Coding Standard](https://github.com/imagekit-developer/imagekit-magento/actions/workflows/coding-standard.yml/badge.svg)](https://github.com/imagekit-developer/imagekit-magento/actions/workflows/coding-standard.yml)
+[![M2 PHPStan](https://github.com/imagekit-developer/imagekit-magento/actions/workflows/phpstan.yml/badge.svg)](https://github.com/imagekit-developer/imagekit-magento/actions/workflows/phpstan.yml)
+
 
 The ImageKit Magento extension links your Magento website to your ImageKit account, allowing you to serve all your images directly from ImageKit and leveraging all the powerful features that ImageKit.io has to offer.
 
@@ -21,5 +32,3 @@ php bin/magento cache:flush
 
 
 Copyright © 2021 [ImageKit](https://imagekit.io/). All rights reserved.
-
-![ImageKit Logo](https://ik.imagekit.io/ikmedia/tr:w-200/logo/light3x_T4-2dKENMe.png)
