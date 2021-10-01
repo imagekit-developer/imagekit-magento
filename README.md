@@ -18,6 +18,8 @@ Before you install the extension, make sure you have a ImageKit account. You can
 
 You can download and install the extension from [Magento Marketplace](https://marketplace.magento.com/imagekit-imagekit-magento.html) or install it via composer by running the following commands under your Magento 2 root dir:
 
+Follow the official step-by step guide for detailed information - https://docs.imagekit.io/platform-guides/magento.
+
 ```
 composer require imagekit/imagekit-magento
 php bin/magento maintenance:enable
@@ -27,9 +29,6 @@ php bin/magento setup:static-content:deploy
 php bin/magento maintenance:disable
 php bin/magento cache:flush
 ```
-
-## Documentation
-Follow the official step-by step guide for detailed information - https://docs.imagekit.io/platform-guides/magento
 
 
 Copyright © 2021 [ImageKit](https://imagekit.io/). All rights reserved.
