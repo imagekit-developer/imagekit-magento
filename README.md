@@ -28,6 +28,8 @@ php bin/magento maintenance:disable
 php bin/magento cache:flush
 ```
 
+## Documentation
+Follow the official step-by step guide for detailed information - https://docs.imagekit.io/platform-guides/magento
 
 
 Copyright © 2021 [ImageKit](https://imagekit.io/). All rights reserved.
