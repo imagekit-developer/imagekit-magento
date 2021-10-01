@@ -17,7 +17,7 @@ Before you install the extension, make sure you have a ImageKit account. You can
 
 ## Installation
 
-You can install it via composer by running the following commands under your Magento 2 root dir:
+You can download and install the extension from [Magento Marketplace](https://marketplace.magento.com/imagekit-imagekit-magento.html) or install it via composer by running the following commands under your Magento 2 root dir:
 
 ```
 composer require imagekit/imagekit-magento
