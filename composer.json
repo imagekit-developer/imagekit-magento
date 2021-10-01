@@ -3,6 +3,7 @@
   "description": "ImageKit 2 Magento Integration",
   "type": "magento2-module",
   "license": "MIT",
+  "version": "1.0.0",
   "authors": [
     {
       "name": "ImageKit Developer",
@@ -13,7 +14,6 @@
       "email": "me@abhinavdhiman.co"
     }
   ],
-  "minimum-stability": "stable",
   "require": {
     "imagekit/imagekit": "^1.2.2"
   },
@@ -24,6 +24,5 @@
     "psr-4": {
       "ImageKit\\ImageKitMagento\\": ""
     }
-  },
-  "version": "1.0.0"
+  }
 }
