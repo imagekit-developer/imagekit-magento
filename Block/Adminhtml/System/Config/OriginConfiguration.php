@@ -30,7 +30,7 @@ class OriginConfiguration extends Field
         $url = $this->storeManager->getStore()->getBaseUrl();
 
         return <<<COMMENT
-        <p>
+ <p>
             <strong>Step 1: </strong>
             Go to the
             <a href="https://imagekit.io/dashboard#external-storage" target="_blank" rel="noopener noreferrer">
@@ -65,6 +65,7 @@ class OriginConfiguration extends Field
         <p>
             <strong>Step 6: </strong>
             Click on Submit button. </p>
-        COMMENT;
+COMMENT;
+
     }
 }
