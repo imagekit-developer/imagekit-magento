@@ -40,7 +40,7 @@ $elementToggleCode = $element->getToggleCode() ? $element->getToggleCode():
      data-mage-init='{"openVideoModal":{}}'
      data-parent-component="<?= $block->escapeHtml($block->getData('config/parentComponent')) ?>"
      data-images="<?= $block->escapeHtmlAttr($block->getImagesJson()) ?>"
-     data-types='<?= /* @noEscape */ $jsonHelper->jsonEncode($block->getImageTypes()) ?>'
+     data-types='<?= /* @noEscape */ $jsonHelper ? $jsonHelper->jsonEncode($block->getImageTypes()): json_encode($block->getImageTypes()) ?>'
 >
     <?php if ($block->getUploaderUrl() !== null) { ?>
         <div class="image image-placeholder" onclick='jQuery(".ik-ml-gallery-modal").trigger("openModal");'>
@@ -319,11 +319,32 @@ $elementToggleCode = $element->getToggleCode() ? $element->getToggleCode():
             </div>
         </div>
     </div>
-    <?= /* @noEscape */ $secureRenderer->renderStyleAsTag(
-        'display:none',
-        'div#' . $videoBlockId
-    ) ?>
+
+    <?php if (isset($secureRenderer)): ?>
+
+        <?= /* @noEscape */ $secureRenderer->renderStyleAsTag(
+            'display:none',
+            'div#' . $videoBlockId
+        ) ?>
+
+    <?php else: ?>
+
+        <style type="text/css">
+            <?php echo 'div#' . $videoBlockId ?> {
+                display:none
+            }
+        </style>
+
+    <?php endif; ?>
+    
 
     <?= $block->getChildHtml('new-video') ?>
 </div>
-<?= /* @noEscape */ $secureRenderer->renderTag('script', [], "jQuery('body').trigger('contentUpdated');", false) ?>
+
+<?php if (isset($secureRenderer)): ?>
+    <?php /* @noEscape */ $secureRenderer->renderTag('script', [], "jQuery('body').trigger('contentUpdated');", false) ?>
+<?php else: ?>
+    <script type="text/javascript">
+        jQuery('body').trigger('contentUpdated');
+    </script>
+<?php endif; ?>
