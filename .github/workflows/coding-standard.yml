@@ -21,3 +21,7 @@ jobs:
           composer global require phpcompatibility/php-compatibility:*
           composer install
           composer config --list --global
+
+      - name: PHPCS
+        run: |
+          ~/.composer/vendor/bin/phpcs --standard=Magento2 .
