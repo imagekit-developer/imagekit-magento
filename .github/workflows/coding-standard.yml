@@ -11,4 +11,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: extdn/github-actions-m2/magento-coding-standard@master
+      - name: Setup PHP Action
+        uses: shivammathur/setup-php@2.21.1
+        with:
+          php-version: 7.4
+      - name: Install dependencies
+        uses: php-actions/composer@v6
+      
