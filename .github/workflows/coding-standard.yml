@@ -20,4 +20,8 @@ jobs:
           composer global require magento/magento-coding-standard:*
           composer global require phpcompatibility/php-compatibility:*
           composer install
-          composer config --list --global
+          ~/.composer/vendor/bin/phpcs --config-set installed_paths ../../magento/magento-coding-standard/,../../phpcompatibility/php-compatibility
+
+      - name: PHPCS
+        run: |
+          ~/.composer/vendor/bin/phpcs --standard=Magento2 --ignore=*/vendor/* .
