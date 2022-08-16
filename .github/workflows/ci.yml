@@ -31,6 +31,7 @@ jobs:
           ~/.composer/vendor/bin/phpcs --severity=9 --standard=Magento2 --ignore=*/vendor/* .
           
   package:
+    name: M2 Zip Package
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
