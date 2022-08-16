@@ -18,6 +18,6 @@ jobs:
           args: zip -r imagekit_imagekit-magento.zip . -x *.git* -x .github*
     - uses: actions/upload-artifact@v2
       with:
-          name: package
+          name: imagekit_imagekit-magento.zip
           path: imagekit_imagekit-magento.zip
 
