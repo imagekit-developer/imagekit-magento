@@ -24,4 +24,4 @@ jobs:
 
       - name: PHPCS
         run: |
-          ~/.composer/vendor/bin/phpcs --severity=10 --standard=Magento2 --ignore=*/vendor/* .
+          ~/.composer/vendor/bin/phpcs --severity=9 --standard=Magento2 --ignore=*/vendor/* .
