@@ -30,14 +30,14 @@
         <field id="endpoint" translate="label comment" type="text" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
           <label>ImageKit URL endpoint (or CNAME)</label>
           <comment>
-            <![CDATA[Copy paste the ImageKit URL endpoint (or CNAME) from ImageKit <a href="https://imagekit.io/dashboard#url-endpoints" target="_blank">dashboard</a>. <a href="https://docs.imagekit.io/integration/integration-overview#step-2-access-the-image-through-imagekit-io-url-endpoint" target="_blank">Learn more</a>]]>
+            <![CDATA[Copy paste the ImageKit URL endpoint (or CNAME) from ImageKit <a href="https://imagekit.io/dashboard/url-endpoints" target="_blank">dashboard</a>. <a href="https://docs.imagekit.io/integration/integration-overview#step-2-access-the-image-through-imagekit-io-url-endpoint" target="_blank">Learn more</a>]]>
           </comment>
           <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
         </field>
         <!-- <field id="private_key" translate="label comment" type="password" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0" canRestore="1">
           <label>ImageKit Private Key</label>
           <comment>
-            <![CDATA[Copy paste the Private Key from ImageKit <a href="https://imagekit.io/dashboard#developers" target="_blank">developers section</a>. <a href="https://docs.imagekit.io/api-reference/api-introduction/api-keys" target="_blank">Learn more</a>]]>
+            <![CDATA[Copy paste the Private Key from ImageKit <a href="https://imagekit.io/dashboard/developer/api-keys" target="_blank">developers section</a>. <a href="https://docs.imagekit.io/api-reference/api-introduction/api-keys" target="_blank">Learn more</a>]]>
           </comment>
           <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
         </field> -->

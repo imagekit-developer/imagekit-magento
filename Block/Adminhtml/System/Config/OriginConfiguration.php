@@ -33,7 +33,7 @@ class OriginConfiguration extends Field
  <p>
             <strong>Step 1: </strong>
             Go to the
-            <a href="https://imagekit.io/dashboard#external-storage" target="_blank" rel="noopener noreferrer">
+            <a href="https://imagekit.io/dashboard/external-storage" target="_blank" rel="noopener noreferrer">
                 external storage section
             </a>
             in your ImageKit.io dashboard, and under the Origins section, click
