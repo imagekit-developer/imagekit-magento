@@ -66,6 +66,5 @@ class OriginConfiguration extends Field
             <strong>Step 6: </strong>
             Click on Submit button. </p>
 COMMENT;
-
     }
 }

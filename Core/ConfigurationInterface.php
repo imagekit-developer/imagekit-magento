@@ -50,7 +50,7 @@ interface ConfigurationInterface
     /**
      * @param string $filename
      * @param string $uniqid
-     * 
+     *
      * @return string
      */
     public function addUniquePrefixToBasename($filename, $uniqid);
