@@ -60,7 +60,7 @@ class OriginConfiguration extends Field
         <p>
             <strong>Step 5: </strong>
             To configure advanced options, refer
-            <a href="/integration/configure-origin/web-server-origin#advanced-options-for-web-server-origin">here</a>.
+            <a href="https://docs.imagekit.io/integration/configure-origin/web-server-origin#advanced-options-for-web-server-origin">here</a>.
         </p>
         <p>
             <strong>Step 6: </strong>
