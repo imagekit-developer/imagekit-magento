@@ -1,0 +1,44 @@
+name: Magento CI
+on: [push, pull_request]
+
+jobs:
+  phpstan:
+    name: M2 PHPStan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: extdn/github-actions-m2/magento-phpstan@master
+        with:
+          composer_name: imagekit/imagekit-magento
+          
+  codestandard:
+    name: M2 Coding Standard
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup PHP Action
+        uses: shivammathur/setup-php@2.21.1
+        with:
+          php-version: 7.4
+      - name: Install dependencies
+        run: |
+          composer global require magento/magento-coding-standard:*
+          composer global require phpcompatibility/php-compatibility:*
+          composer install
+          ~/.composer/vendor/bin/phpcs --config-set installed_paths ../../magento/magento-coding-standard/,../../phpcompatibility/php-compatibility
+      - name: PHPCS
+        run: |
+          ~/.composer/vendor/bin/phpcs --severity=9 --standard=Magento2 --ignore=*/vendor/* .
+          
+  package:
+    name: M2 Zip Package
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - uses: montudor/action-zip@v1
+      with:
+          args: zip -r imagekit_imagekit-magento.zip . -x *.git* -x .github*
+    - uses: actions/upload-artifact@v2
+      with:
+          name: imagekit_imagekit-magento.zip
+          path: imagekit_imagekit-magento.zip

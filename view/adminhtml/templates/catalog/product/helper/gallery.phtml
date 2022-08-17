@@ -330,7 +330,7 @@ $elementToggleCode = $element->getToggleCode() ? $element->getToggleCode():
     <?php else: ?>
 
         <style type="text/css">
-            <?php echo 'div#' . $videoBlockId ?> {
+            <?php /* @noEscape */ echo 'div#' . $videoBlockId ?> {
                 display:none
             }
         </style>

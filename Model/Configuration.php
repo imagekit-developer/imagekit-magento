@@ -131,7 +131,7 @@ class Configuration implements ConfigurationInterface
         $uniqid = $uniqid ? $uniqid : $this->generateIkuniqid();
 
         if (dirname($filename) === '.') {
-            return $uniqid . basename($filename);    
+            return $uniqid . basename($filename);
         }
         return dirname($filename) . '/' . $uniqid . basename($filename);
     }
