@@ -342,7 +342,7 @@ $elementToggleCode = $element->getToggleCode() ? $element->getToggleCode():
 </div>
 
 <?php if (isset($secureRenderer)): ?>
-    <?php /* @noEscape */ $secureRenderer->renderTag('script', [], "jQuery('body').trigger('contentUpdated');", false) ?>
+    <?php /* @noEscape */ echo $secureRenderer->renderTag('script', [], "jQuery('body').trigger('contentUpdated');", false) ?>
 <?php else: ?>
     <script type="text/javascript">
         jQuery('body').trigger('contentUpdated');
