@@ -15,7 +15,7 @@
     }
   ],
   "require": {
-    "imagekit/imagekit": "^1.2.2"
+    "imagekit/imagekit": "^3.0.0"
   },
   "autoload": {
     "files": [
