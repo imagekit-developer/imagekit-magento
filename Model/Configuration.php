@@ -10,6 +10,7 @@ use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\Module\ModuleListInterface;
 use Magento\Framework\UrlInterface;
 use Magento\Store\Model\StoreManagerInterface;
+use Magento\Store\Model\ScopeInterface;
 
 class Configuration implements ConfigurationInterface
 {
@@ -72,13 +73,12 @@ class Configuration implements ConfigurationInterface
 
     public function isEnabled()
     {
-        return $this->coreRegistry->registry(self::CONFIG_PATH_ENABLED) ||
-            $this->configReader->isSetFlag(self::CONFIG_PATH_ENABLED);
+        return $this->configReader->isSetFlag(self::CONFIG_PATH_ENABLED, ScopeInterface::SCOPE_STORE);
     }
 
     public function getEndpoint()
     {
-        return $this->configReader->getValue(self::CONFIG_PATH_ENDPOINT);
+        return $this->configReader->getValue(self::CONFIG_PATH_ENDPOINT, ScopeInterface::SCOPE_STORE);
     }
 
     // Public key and Private key are required for ImageKit PHP SDK 1.2.2.
@@ -88,19 +88,19 @@ class Configuration implements ConfigurationInterface
     public function getPublicKey()
     {
         return "dummy_public_key";
-        // return $this->configReader->getValue(self::CONFIG_PATH_PUBLIC_KEY);
+        // return $this->configReader->getValue(self::CONFIG_PATH_PUBLIC_KEY, ScopeInterface::SCOPE_STORE);
     }
 
     // Provision to get Private key from User provided for future updates
     public function getPrivateKey()
     {
         return "dummy_private_key";
-        // return $this->configReader->getValue(self::CONFIG_PATH_PRIVATE_KEY);
+        // return $this->configReader->getValue(self::CONFIG_PATH_PRIVATE_KEY, ScopeInterface::SCOPE_STORE);
     }
 
     public function isOriginConfigured()
     {
-        return $this->configReader->getValue(self::CONFIG_PATH_ORIGIN_CONFIGURED);
+        return $this->configReader->getValue(self::CONFIG_PATH_ORIGIN_CONFIGURED, ScopeInterface::SCOPE_STORE);
     }
 
     public function getModuleVersion()
