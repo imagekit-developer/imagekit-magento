@@ -1,0 +1,45 @@
+{
+  "name": "ImageKit Magento Latest E2E",
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "app",
+  "workspaceFolder": "/workspace/imagekit-module",
+  "workspaceMount": "source=${localWorkspaceFolder},target=/workspace/imagekit-module,type=bind,consistency=cached",
+  "shutdownAction": "stopCompose",
+  "forwardPorts": [
+    8080,
+    3306,
+    9200
+  ],
+  "portsAttributes": {
+    "8080": {
+      "label": "Magento",
+      "onAutoForward": "notify"
+    },
+    "3306": {
+      "label": "MariaDB",
+      "onAutoForward": "silent"
+    },
+    "9200": {
+      "label": "OpenSearch",
+      "onAutoForward": "silent"
+    }
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "bmewburn.vscode-intelephense-client",
+        "xdebug.php-debug",
+        "ms-azuretools.vscode-docker"
+      ],
+      "settings": {
+        "php.validate.executablePath": "/usr/local/bin/php",
+        "editor.formatOnSave": false,
+        "intelephense.environment.phpVersion": "8.2.0"
+      }
+    }
+  },
+  "containerEnv": {
+    "MAGENTO_ROOT": "/var/www/magento"
+  },
+  "postCreateCommand": "bash .devcontainer/scripts/post-create.sh"
+}
