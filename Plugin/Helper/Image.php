@@ -62,7 +62,10 @@ class Image
         }
 
         $imagePath = $this->imageFile ?: $this->product->getData($helper->getType());
-        $image = sprintf('catalog/product%s', $imagePath);
+        $imagePath = ltrim($imagePath, '/');
+        $imagePath = preg_replace('#^media/#', '', $imagePath);
+        $imagePath = preg_replace('#^catalog/product/#', '', $imagePath);
+        $image = sprintf('catalog/product/%s', $imagePath);
         $this->createTransformation($helper);
 
         return $this->imageKitImageProvider->retrieveTransformed($image, [$this->transformations], $originalMethod());
