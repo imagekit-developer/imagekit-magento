@@ -1,5 +1,5 @@
 var config = {
   paths: {
-    imagekitMediaLibrary: "//unpkg.com/imagekit-media-library-widget@1.0.4/dist/imagekit-media-library-widget.min"
+    imagekitMediaLibrary: "//unpkg.com/imagekit-media-library-widget@2.4.1/dist/imagekit-media-library-widget.min"
   }
 }
