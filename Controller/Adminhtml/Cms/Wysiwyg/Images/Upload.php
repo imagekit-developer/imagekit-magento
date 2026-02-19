@@ -90,7 +90,6 @@ class Upload extends ImagesUpload
         Context $context,
         Registry $coreRegistry,
         JsonFactory $resultJsonFactory,
-        DirectoryResolver $directoryResolver = null,
         DirectoryList $directoryList,
         Config $mediaConfig,
         Filesystem $fileSystem,
@@ -101,7 +100,8 @@ class Upload extends ImagesUpload
         NotProtectedExtension $extensionValidator,
         FileIo $file,
         LibraryMapFactory $libraryMapFactory,
-        ConfigurationInterface $configuration
+        ConfigurationInterface $configuration,
+        ?DirectoryResolver $directoryResolver = null,
     ) {
         parent::__construct($context, $coreRegistry, $resultJsonFactory, $directoryResolver);
         $this->directoryList = $directoryList;
