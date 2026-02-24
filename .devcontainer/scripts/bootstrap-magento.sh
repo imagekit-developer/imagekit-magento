@@ -17,7 +17,7 @@ ADMIN_FIRSTNAME="${MAGENTO_ADMIN_FIRSTNAME:-Admin}"
 ADMIN_LASTNAME="${MAGENTO_ADMIN_LASTNAME:-User}"
 ADMIN_EMAIL="${MAGENTO_ADMIN_EMAIL:-admin@example.com}"
 ADMIN_USER="${MAGENTO_ADMIN_USER:-admin}"
-ADMIN_PASSWORD="${MAGENTO_ADMIN_PASSWORD:-Admin123!Admin123!}"
+ADMIN_PASSWORD="${MAGENTO_ADMIN_PASSWORD:-Admin123!}"
 ADMIN_URI="${MAGENTO_ADMIN_URI:-admin}"
 
 MAGENTO_PUBLIC_KEY="${MAGENTO_PUBLIC_KEY:-}"
@@ -29,9 +29,10 @@ fix_permissions() {
     return
   fi
 
-  chown -R www-data:www-data "${MAGENTO_ROOT}/var" "${MAGENTO_ROOT}/generated" "${MAGENTO_ROOT}/pub/static" "${MAGENTO_ROOT}/pub/media" "${MAGENTO_ROOT}/app/etc"
-  find "${MAGENTO_ROOT}/var" "${MAGENTO_ROOT}/generated" "${MAGENTO_ROOT}/pub/static" "${MAGENTO_ROOT}/pub/media" "${MAGENTO_ROOT}/app/etc" -type d -exec chmod 2775 {} +
-  find "${MAGENTO_ROOT}/var" "${MAGENTO_ROOT}/generated" "${MAGENTO_ROOT}/pub/static" "${MAGENTO_ROOT}/pub/media" "${MAGENTO_ROOT}/app/etc" -type f -exec chmod 664 {} +
+  chown -R www-data:www-data "${MAGENTO_ROOT}"
+  find "${MAGENTO_ROOT}" -type d -exec chmod 2775 {} +
+  find "${MAGENTO_ROOT}" -type f -exec chmod 664 {} +
+  chown -R www-data:www-data /composer/
 }
 
 wait_for_db() {
@@ -51,21 +52,6 @@ wait_for_opensearch() {
     sleep 2
   done
 }
-
-mkdir -p "${MAGENTO_ROOT}"
-
-if [ ! -f "${MAGENTO_ROOT}/composer.json" ]; then
-  if [ -z "${MAGENTO_PUBLIC_KEY}" ] || [ -z "${MAGENTO_PRIVATE_KEY}" ]; then
-    echo "Magento source is not present at ${MAGENTO_ROOT}."
-    echo "Set MAGENTO_PUBLIC_KEY and MAGENTO_PRIVATE_KEY before running this script."
-    echo "Example: MAGENTO_PUBLIC_KEY=... MAGENTO_PRIVATE_KEY=... .devcontainer/scripts/bootstrap-magento.sh"
-    exit 1
-  fi
-
-  COMPOSER_MEMORY_LIMIT=-1 composer config --global --auth http-basic.repo.magento.com "${MAGENTO_PUBLIC_KEY}" "${MAGENTO_PRIVATE_KEY}"
-  COMPOSER_MEMORY_LIMIT=-1 composer create-project --repository-url=https://repo.magento.com/ \
-    magento/project-community-edition="${MAGENTO_VERSION}" "${MAGENTO_ROOT}"
-fi
 
 cd "${MAGENTO_ROOT}"
 
@@ -110,9 +96,10 @@ fi
 
 fix_permissions
 
-bash /workspace/imagekit-module/.devcontainer/scripts/install-module.sh
-bash /workspace/imagekit-module/.devcontainer/scripts/disable-2fa.sh
-bash /workspace/imagekit-module/.devcontainer/scripts/install-sampledata.sh
+bash /var/www/magento/app/code/ImageKit/ImageKitMagento/.devcontainer/scripts/install-module.sh
+bash /var/www/magento/app/code/ImageKit/ImageKitMagento/.devcontainer/scripts/disable-2fa.sh
+bash /var/www/magento/app/code/ImageKit/ImageKitMagento/.devcontainer/scripts/install-sampledata.sh
+bash /var/www/magento/app/code/ImageKit/ImageKitMagento/.devcontainer/scripts/set-admin-session-timeout.sh
 
 echo
 echo "Magento is ready at: ${BASE_URL}"

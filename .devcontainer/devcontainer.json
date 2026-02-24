@@ -2,8 +2,7 @@
   "name": "ImageKit Magento Latest E2E",
   "dockerComposeFile": "docker-compose.yml",
   "service": "app",
-  "workspaceFolder": "/workspace/imagekit-module",
-  "workspaceMount": "source=${localWorkspaceFolder},target=/workspace/imagekit-module,type=bind,consistency=cached",
+  "workspaceFolder": "/var/www/magento/app/code/ImageKit/ImageKitMagento",
   "shutdownAction": "stopCompose",
   "forwardPorts": [
     8080,

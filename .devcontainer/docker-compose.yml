@@ -3,6 +3,10 @@ services:
     build:
       context: ..
       dockerfile: .devcontainer/Dockerfile
+      args:
+        MAGENTO_PUBLIC_KEY: ${MAGENTO_PUBLIC_KEY:-}
+        MAGENTO_PRIVATE_KEY: ${MAGENTO_PRIVATE_KEY:-}
+        MAGENTO_VERSION: ${MAGENTO_VERSION:-2.4.*}
     environment:
       MAGENTO_ROOT: /var/www/magento
       PHP_IDE_CONFIG: serverName=imagekit-magento
@@ -26,8 +30,8 @@ services:
       MAGENTO_ADMIN_PASSWORD: ${MAGENTO_ADMIN_PASSWORD:-Admin123!Admin123!}
       MAGENTO_ADMIN_URI: ${MAGENTO_ADMIN_URI:-admin}
     volumes:
-      - ..:/workspace/imagekit-module
       - magento-data:/var/www/magento
+      - ..:/var/www/magento/app/code/ImageKit/ImageKitMagento
     depends_on:
       - db
       - opensearch
