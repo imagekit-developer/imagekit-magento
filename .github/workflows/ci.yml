@@ -22,6 +22,7 @@ jobs:
           php-version: 8.2
       - name: Install dependencies
         run: |
+          composer global config allow-plugins.dealerdirect/phpcodesniffer-composer-installer true
           composer global require magento/magento-coding-standard:*
           composer global require phpcompatibility/php-compatibility:*
           composer install
