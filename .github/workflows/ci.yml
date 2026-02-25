@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: extdn/github-actions-m2/magento-phpstan@master
+      - uses: extdn/github-actions-m2/magento-phpstan/8.2@master
         with:
           composer_name: imagekit/imagekit-magento
           
@@ -17,9 +17,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Setup PHP Action
-        uses: shivammathur/setup-php@2.21.1
+        uses: shivammathur/setup-php@2.36.0
         with:
-          php-version: 7.4
+          php-version: 8.2
       - name: Install dependencies
         run: |
           composer global require magento/magento-coding-standard:*
