@@ -141,11 +141,13 @@ class Upload extends ImagesUpload
             $this->validateRemoteFileExtensions($localFilePath);
 
             $this->retrieveRemoteImage($this->remoteFileUrl, $localFilePath);
-            $this->getStorage()->resizeFile($localFilePath, true);
 
-            $this->imageAdapter->validateUploadFile($localFilePath);
+            if ($this->isImageFile($fileData)) {
+                $this->getStorage()->resizeFile($localFilePath, true);
+                $this->imageAdapter->validateUploadFile($localFilePath);
+            }
 
-            $result = $this->appendResultSaveRemoteImage($localFilePath);
+            $result = $this->appendResultSaveRemoteImage($localFilePath, $fileData);
 
             $this->saveMapping($ikUniqId, $fileData['filePath']);
         } catch (\Exception $e) {
@@ -157,14 +159,22 @@ class Upload extends ImagesUpload
         return $resultJson->setData($result);
     }
 
+    private function isImageFile($fileData)
+    {
+        return !isset($fileData['fileType']) || $fileData['fileType'] === 'image';
+    }
+
     private function addFallbackExtension($localFileName, $fileData)
     {
-        $fileType = $fileData['fileType'];
+        $pathInfo = $this->file->getPathInfo($localFileName);
 
-        if ($fileType === "image") {
-            $pathInfo = $this->file->getPathInfo($localFileName);
+        if ($this->isImageFile($fileData)) {
             if (!isset($pathInfo['extension'])) {
                 $localFileName = $localFileName . ".jpg";
+            }
+        } else {
+            if (!isset($pathInfo['extension'])) {
+                $localFileName = $localFileName . ".mp4";
             }
         }
 
@@ -194,8 +204,11 @@ class Upload extends ImagesUpload
     private function validateRemoteFileExtensions($filePath)
     {
         $extension = $this->file->getPathInfo($filePath)['extension'];
-        $allowedExtensions = (array) $this->getStorage()->getAllowedExtensions($this->getRequest()->getParam('type'));
-        if (!$this->extensionValidator->isValid($extension) || !in_array($extension, $allowedExtensions)) {
+        $type = $this->getRequest()->getParam('type');
+        $allowedExtensions = (array) $this->getStorage()->getAllowedExtensions($type);
+        $mediaExtensions = (array) $this->getStorage()->getAllowedExtensions('media');
+        $allAllowed = array_unique(array_merge($allowedExtensions, $mediaExtensions));
+        if (!$this->extensionValidator->isValid($extension) || !in_array($extension, $allAllowed)) {
             throw new ValidatorException(__('Disallowed file type.'));
         }
     }
@@ -213,11 +226,15 @@ class Upload extends ImagesUpload
         $this->fileUtility->saveFile($localFilePath, $image);
     }
 
-    protected function appendResultSaveRemoteImage($filePath)
+    protected function appendResultSaveRemoteImage($filePath, $fileData = [])
     {
         $fileInfo = $this->file->getPathInfo($filePath);
         $result['name'] = $fileInfo['basename'];
-        $result['type'] = $this->imageAdapter->getMimeType();
+        if ($this->isImageFile($fileData)) {
+            $result['type'] = $this->imageAdapter->getMimeType();
+        } else {
+            $result['type'] = mime_content_type($filePath) ?: 'application/octet-stream';
+        }
         $result['error'] = 0;
         $result['size'] = filesize($filePath); // phpcs:ignore Magento2.Functions.DiscouragedFunction.Discouraged
         $result['url'] = $this->getRequest()->getParam('remote_image');

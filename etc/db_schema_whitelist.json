@@ -1,0 +1,14 @@
+{
+    "imagekit_library_map": {
+        "column": {
+            "id": true,
+            "image_path": true,
+            "ik_path": true,
+            "asset_type": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "IMAGEKIT_LIBRARY_MAP_IMAGE_PATH": true
+        }
+    }
+}

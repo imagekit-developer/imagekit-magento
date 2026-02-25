@@ -4,6 +4,7 @@
     <column xsi:type="int" name="id" padding="10" unsigned="true" nullable="false" identity="true" comment="ID"/>
     <column xsi:type="varchar" name="image_path" nullable="false" length="255" comment="Image Path"/>
     <column xsi:type="varchar" name="ik_path" nullable="false" length="255" comment="ImageKit Path"/>
+    <column xsi:type="varchar" name="asset_type" nullable="false" length="32" default="image" comment="Asset Type (image or video-thumbnail)"/>
     <constraint xsi:type="primary" referenceId="PRIMARY">
       <column name="id"/>
     </constraint>
