@@ -24,9 +24,7 @@ jobs:
         run: |
           composer global config allow-plugins.dealerdirect/phpcodesniffer-composer-installer true
           composer global require magento/magento-coding-standard:*
-          composer global require phpcompatibility/php-compatibility:*
           composer install
-          ~/.composer/vendor/bin/phpcs --config-set installed_paths ../../magento/magento-coding-standard/,../../phpcompatibility/php-compatibility
       - name: PHPCS
         run: |
           ~/.composer/vendor/bin/phpcs --severity=9 --standard=Magento2 --ignore=*/vendor/* .
