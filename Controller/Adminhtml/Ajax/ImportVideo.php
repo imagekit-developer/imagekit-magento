@@ -122,7 +122,7 @@ class ImportVideo extends Action
             }
             $videoPath = $parsedUrl['path'] ?? '';
             $endpoint = (string) $this->configuration->getEndpoint();
-            $parsedEndpoint = @parse_url($endpoint) ?: [];
+            $parsedEndpoint = parse_url($endpoint) ?: [];
             $endpointPath = $parsedEndpoint['path'] ?? '';
 
             $videoPathParts = array_values(array_filter(explode('/', ltrim($videoPath, '/'))));

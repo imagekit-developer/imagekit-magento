@@ -101,7 +101,7 @@ class Upload extends ImagesUpload
         FileIo $file,
         LibraryMapFactory $libraryMapFactory,
         ConfigurationInterface $configuration,
-        ?DirectoryResolver $directoryResolver = null,
+        ?DirectoryResolver $directoryResolver = null
     ) {
         parent::__construct($context, $coreRegistry, $resultJsonFactory, $directoryResolver);
         $this->directoryList = $directoryList;
