@@ -72,7 +72,9 @@ class ImageFactory
                 );
                 $imagePath = preg_replace('/\/catalog\/product\/cache\/[a-f0-9]{32}\//', '/', $imagePath);
 
-                $image = sprintf('catalog/product%s', $imagePath);
+                $imagePath = ltrim($imagePath, '/');
+                $imagePath = preg_replace('#^catalog/product/#', '', $imagePath);
+                $image = sprintf('catalog/product/%s', $imagePath);
                 $transformations = $this->createTransformation($imageMiscParams);
 
                 $generatedImageUrl = $this->imageKitImageProvider->retrieveTransformed(

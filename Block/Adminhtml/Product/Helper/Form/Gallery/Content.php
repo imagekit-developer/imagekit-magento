@@ -42,4 +42,19 @@ class Content extends GalleryContent
 
         return $imageUploadUrl;
     }
+
+    public function getVideoImporterUrl()
+    {
+        if (!$this->configuration->isEnabled()) {
+            return null;
+        }
+
+        try {
+            $videoImportUrl = $this->_urlBuilder->addSessionParam()->getUrl('imagekit/ajax/importVideo');
+        } catch (\Exception $e) {
+            $videoImportUrl = $this->_urlBuilder->getUrl('imagekit/ajax/importVideo');
+        }
+
+        return $videoImportUrl;
+    }
 }

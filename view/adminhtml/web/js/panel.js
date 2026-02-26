@@ -5,8 +5,10 @@ define([
   'Magento_Ui/js/modal/alert',
   'mage/backend/notification',
   'mage/translate',
-], function (Element, $, IKMediaLibraryWidget, uiAlert, notification, $t,) {
+], function (Element, $, ikMLWidget, uiAlert, notification, $t) {
   'use strict';
+
+  const IKMediaLibraryWidget = ikMLWidget.ImagekitMediaLibraryWidget;
 
   return Element.extend({
     defaults: {
@@ -14,7 +16,8 @@ define([
       "ikMLContainer": "#imagekit-media-library-modal-content",
       "triggerSelector": null,
       "triggerEvent": null,
-      "callback": null
+      "callback": null,
+      "videoImporterUrl": null
     },
     initialize: function () {
       this._super();
@@ -41,8 +44,14 @@ define([
             if (event.eventType === "INSERT") {
 
               for (const data of event.data) {
+                var isVideo = data.fileType && data.fileType !== 'image' &&
+                    /\.(mp4|webm|ogv|mov)$/i.test(data.name);
+                var uploadUrl = (isVideo && widget.videoImporterUrl)
+                    ? widget.videoImporterUrl
+                    : widget.imageUploaderUrl;
+
                 $.ajax({
-                  url: widget.imageUploaderUrl,
+                  url: uploadUrl,
                   data: {
                     file: data,
                     param_name: 'image',

@@ -1,0 +1,80 @@
+services:
+  app:
+    build:
+      context: ..
+      dockerfile: .devcontainer/Dockerfile
+      args:
+        MAGENTO_PUBLIC_KEY: ${MAGENTO_PUBLIC_KEY:-}
+        MAGENTO_PRIVATE_KEY: ${MAGENTO_PRIVATE_KEY:-}
+        MAGENTO_VERSION: ${MAGENTO_VERSION:-2.4.*}
+    environment:
+      MAGENTO_ROOT: /var/www/magento
+      PHP_IDE_CONFIG: serverName=imagekit-magento
+      XDEBUG_MODE: debug,develop
+      XDEBUG_CONFIG: client_host=host.docker.internal client_port=9003 idekey=VSCODE
+      MAGENTO_PUBLIC_KEY: ${MAGENTO_PUBLIC_KEY:-}
+      MAGENTO_PRIVATE_KEY: ${MAGENTO_PRIVATE_KEY:-}
+      MAGENTO_VERSION: ${MAGENTO_VERSION:-2.4.*}
+      MAGENTO_BASE_URL: ${MAGENTO_BASE_URL:-http://localhost:8080/}
+      MAGENTO_DB_HOST: ${MAGENTO_DB_HOST:-db}
+      MAGENTO_DB_NAME: ${MAGENTO_DB_NAME:-magento}
+      MAGENTO_DB_USER: ${MAGENTO_DB_USER:-magento}
+      MAGENTO_DB_PASSWORD: ${MAGENTO_DB_PASSWORD:-magento}
+      MAGENTO_SEARCH_ENGINE: ${MAGENTO_SEARCH_ENGINE:-opensearch}
+      MAGENTO_OPENSEARCH_HOST: ${MAGENTO_OPENSEARCH_HOST:-opensearch}
+      MAGENTO_OPENSEARCH_PORT: ${MAGENTO_OPENSEARCH_PORT:-9200}
+      MAGENTO_ADMIN_FIRSTNAME: ${MAGENTO_ADMIN_FIRSTNAME:-Admin}
+      MAGENTO_ADMIN_LASTNAME: ${MAGENTO_ADMIN_LASTNAME:-User}
+      MAGENTO_ADMIN_EMAIL: ${MAGENTO_ADMIN_EMAIL:-admin@example.com}
+      MAGENTO_ADMIN_USER: ${MAGENTO_ADMIN_USER:-admin}
+      MAGENTO_ADMIN_PASSWORD: ${MAGENTO_ADMIN_PASSWORD:-Admin123!Admin123!}
+      MAGENTO_ADMIN_URI: ${MAGENTO_ADMIN_URI:-admin}
+    volumes:
+      - magento-data:/var/www/magento
+      - ..:/var/www/magento/app/code/ImageKit/ImageKitMagento
+    depends_on:
+      - db
+      - opensearch
+
+  web:
+    image: nginx:1.26-alpine
+    depends_on:
+      - app
+    ports:
+      - "8080:80"
+    volumes:
+      - magento-data:/var/www/magento
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+
+  db:
+    image: mariadb:10.6
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: magento
+      MYSQL_USER: magento
+      MYSQL_PASSWORD: magento
+    ports:
+      - "3306:3306"
+    volumes:
+      - mariadb-data:/var/lib/mysql
+
+  opensearch:
+    image: opensearchproject/opensearch:2.19.1
+    environment:
+      discovery.type: single-node
+      DISABLE_INSTALL_DEMO_CONFIG: "true"
+      DISABLE_SECURITY_PLUGIN: "true"
+      OPENSEARCH_JAVA_OPTS: "-Xms512m -Xmx512m"
+    ports:
+      - "9200:9200"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - opensearch-data:/usr/share/opensearch/data
+
+volumes:
+  magento-data:
+  mariadb-data:
+  opensearch-data:
