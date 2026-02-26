@@ -5,10 +5,10 @@ define([
   'Magento_Ui/js/modal/alert',
   'mage/backend/notification',
   'mage/translate',
-], function (Element, $, ikMLWidget, uiAlert, notification, $t,) {
+], function (Element, $, ikMLWidget, uiAlert, notification, $t) {
   'use strict';
 
-  const IKMediaLibraryWidget = ikMLWidget.ImagekitMediaLibraryWidget
+  const IKMediaLibraryWidget = ikMLWidget.ImagekitMediaLibraryWidget;
 
   return Element.extend({
     defaults: {

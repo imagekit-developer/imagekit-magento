@@ -158,7 +158,7 @@ class ImportVideo extends Action
             $fileInfo = pathinfo($localFilePath);
             $localFilePath = $fileInfo['dirname'] . DIRECTORY_SEPARATOR . $fileName;
 
-            $this->retrieveRemoteImage($thumbnailUrl, $localFilePath);
+            $this->retrieveRemoteThumbnail($thumbnailUrl, $localFilePath);
 
             $localFileFullPath = $this->appendAbsoluteFileSystemPath($localFilePath);
             $imageAdapter = $this->imageAdapterFactory->create();
@@ -210,7 +210,7 @@ class ImportVideo extends Action
         return $response;
     }
 
-    protected function retrieveRemoteImage($fileUrl, $localFilePath, $maxRetries = 5, $retryDelaySec = 3)
+    protected function retrieveRemoteThumbnail($fileUrl, $localFilePath, $maxRetries = 5, $retryDelaySec = 3)
     {
         $attempts = 0;
 
