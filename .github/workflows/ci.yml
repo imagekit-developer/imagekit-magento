@@ -36,7 +36,7 @@ jobs:
     - uses: actions/checkout@v4
     - uses: montudor/action-zip@v1
       with:
-          args: zip -r imagekit_imagekit-magento.zip . -x *.git* -x .github*
+          args: zip -r imagekit_imagekit-magento.zip . -x *.git* -x .github* -x ".devcontainer*"
     - uses: actions/upload-artifact@v4
       with:
           name: imagekit_imagekit-magento.zip
