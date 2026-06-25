@@ -54,10 +54,19 @@ define(['jquery'], function ($) {
             }
 
             if (videoInfo.type === 'imagekit') {
+                var a = document.createElement('a');
+
+                a.href = url;
+
+                var cleanPath = a.pathname.replace(/\/$/, ''),
+                    filename = cleanPath.split('/').pop(),
+                    title = filename.replace(/\.[^.]+$/, ''),
+                    thumbnail = a.protocol + '//' + a.host + cleanPath + '/ik-thumbnail.jpg' + (a.search || '');
+
                 var respData = {
-                    title: '',
+                    title: title,
                     description: '',
-                    thumbnail: '',
+                    thumbnail: thumbnail,
                     videoId: videoInfo.id,
                     videoProvider: 'imagekit'
                 };
