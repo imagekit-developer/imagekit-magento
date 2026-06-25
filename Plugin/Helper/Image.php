@@ -62,6 +62,7 @@ class Image
         }
 
         $imagePath = $this->imageFile ?: $this->product->getData($helper->getType());
+        $imagePath = $imagePath ?? '';
         $imagePath = ltrim($imagePath, '/');
         $imagePath = preg_replace('#^media/#', '', $imagePath);
         $imagePath = preg_replace('#^catalog/product/#', '', $imagePath);
