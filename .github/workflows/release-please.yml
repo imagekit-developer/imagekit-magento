@@ -1,0 +1,74 @@
+on:
+  push:
+    branches:
+      - master
+
+permissions:
+  contents: write
+  pull-requests: write
+
+name: release-please
+
+jobs:
+  release-please:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: googleapis/release-please-action@v4
+        id: release
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          config-file: release-please-config.json
+          manifest-file: .release-please-manifest.json
+
+      - name: Checkout repository
+        if: ${{ steps.release.outputs.release_created }}
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Conditionally update setup_version and schema_version
+        if: ${{ steps.release.outputs.release_created }}
+        run: |
+          PREV_TAG=$(git describe --abbrev=0 --tags HEAD^ 2>/dev/null || echo "")
+          if [ -z "$PREV_TAG" ]; then
+            echo "No previous tag found, skipping version checks."
+            exit 0
+          fi
+
+          NEW_VERSION="${{ steps.release.outputs.major }}.${{ steps.release.outputs.minor }}.${{ steps.release.outputs.patch }}"
+
+          DB_SCHEMA_CHANGED=$(git diff "$PREV_TAG" HEAD -- etc/db_schema.xml | wc -l)
+          DATA_PATCH_CHANGED=$(git diff "$PREV_TAG" HEAD -- Setup/Patch/Data/ | wc -l)
+
+          UPDATE_SETUP=false
+          UPDATE_SCHEMA=false
+
+          if [ "$DB_SCHEMA_CHANGED" -gt "0" ]; then
+            echo "db_schema.xml changed — will update setup_version and schema_version"
+            UPDATE_SETUP=true
+            UPDATE_SCHEMA=true
+          fi
+
+          if [ "$DATA_PATCH_CHANGED" -gt "0" ]; then
+            echo "Data patches changed — will update setup_version"
+            UPDATE_SETUP=true
+          fi
+
+          if [ "$UPDATE_SETUP" = false ] && [ "$UPDATE_SCHEMA" = false ]; then
+            echo "No schema or data patch changes — skipping module.xml version bumps."
+            exit 0
+          fi
+
+          if [ "$UPDATE_SETUP" = true ]; then
+            sed -i "s/setup_version=\"[0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\"/setup_version=\"$NEW_VERSION\"/" etc/module.xml
+          fi
+
+          if [ "$UPDATE_SCHEMA" = true ]; then
+            sed -i "s/schema_version=\"[0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\"/schema_version=\"$NEW_VERSION\"/" etc/module.xml
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add etc/module.xml
+          git commit -m "chore: update module versions to $NEW_VERSION [skip ci]"
+          git push
