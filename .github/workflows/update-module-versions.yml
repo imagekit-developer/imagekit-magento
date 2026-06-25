@@ -1,7 +1,8 @@
 on:
-  push:
+  pull_request:
     branches:
-      - 'release-please--**'
+      - master
+    types: [opened, synchronize, reopened]
 
 permissions:
   contents: write
@@ -10,10 +11,12 @@ name: Update module versions in release PR
 
 jobs:
   update-versions:
+    if: startsWith(github.head_ref, 'release-please--')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
+          ref: ${{ github.head_ref }}
           fetch-depth: 0
 
       - name: Conditionally update setup_version and schema_version
