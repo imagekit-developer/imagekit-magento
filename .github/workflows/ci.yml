@@ -34,9 +34,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
-    - name: Create zip package
-      run: zip -r imagekit_imagekit-magento.zip . -x "*.git*" -x ".github*" -x ".devcontainer*"
+    - name: Prepare package directory
+      run: |
+        mkdir -p /tmp/package
+        cp -r . /tmp/package/
+        rm -rf /tmp/package/.git /tmp/package/.github /tmp/package/.devcontainer
     - uses: actions/upload-artifact@v4
       with:
-          name: imagekit_imagekit-magento.zip
-          path: imagekit_imagekit-magento.zip
+          name: imagekit_imagekit-magento
+          path: /tmp/package/

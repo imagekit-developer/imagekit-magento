@@ -15,7 +15,21 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: googleapis/release-please-action@v4
+        id: release
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           config-file: release-please-config.json
           manifest-file: .release-please-manifest.json
+
+      - uses: actions/checkout@v4
+        if: ${{ steps.release.outputs.release_created }}
+
+      - name: Create release zip
+        if: ${{ steps.release.outputs.release_created }}
+        run: zip -r imagekit_imagekit-magento.zip . -x "*.git*" -x ".github*" -x ".devcontainer*"
+
+      - name: Upload zip to GitHub Release
+        if: ${{ steps.release.outputs.release_created }}
+        run: gh release upload ${{ steps.release.outputs.tag_name }} imagekit_imagekit-magento.zip
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
