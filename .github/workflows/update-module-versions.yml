@@ -1,0 +1,72 @@
+on:
+  push:
+    branches:
+      - 'release-please--**'
+
+permissions:
+  contents: write
+
+name: Update module versions in release PR
+
+jobs:
+  update-versions:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Conditionally update setup_version and schema_version
+        run: |
+          NEW_VERSION=$(jq -r '.version' composer.json)
+          BASE=$(git merge-base HEAD origin/master)
+
+          DB_SCHEMA_CHANGED=$(git diff "$BASE" HEAD -- etc/db_schema.xml | wc -l)
+          DATA_PATCH_CHANGED=$(git diff "$BASE" HEAD -- Setup/Patch/Data/ | wc -l)
+
+          UPDATE_SETUP=false
+          UPDATE_SCHEMA=false
+
+          if [ "$DB_SCHEMA_CHANGED" -gt "0" ]; then
+            echo "db_schema.xml changed — will update setup_version and schema_version"
+            UPDATE_SETUP=true
+            UPDATE_SCHEMA=true
+          fi
+
+          if [ "$DATA_PATCH_CHANGED" -gt "0" ]; then
+            echo "Data patches changed — will update setup_version"
+            UPDATE_SETUP=true
+          fi
+
+          if [ "$UPDATE_SETUP" = false ] && [ "$UPDATE_SCHEMA" = false ]; then
+            echo "No schema or data patch changes — skipping module.xml version bumps."
+            exit 0
+          fi
+
+          NEEDS_COMMIT=false
+
+          if [ "$UPDATE_SETUP" = true ]; then
+            CURRENT=$(grep -oP 'setup_version="\K[^"]+' etc/module.xml)
+            if [ "$CURRENT" != "$NEW_VERSION" ]; then
+              sed -i "s/setup_version=\"[0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\"/setup_version=\"$NEW_VERSION\"/" etc/module.xml
+              NEEDS_COMMIT=true
+            fi
+          fi
+
+          if [ "$UPDATE_SCHEMA" = true ]; then
+            CURRENT=$(grep -oP 'schema_version="\K[^"]+' etc/module.xml)
+            if [ "$CURRENT" != "$NEW_VERSION" ]; then
+              sed -i "s/schema_version=\"[0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\"/schema_version=\"$NEW_VERSION\"/" etc/module.xml
+              NEEDS_COMMIT=true
+            fi
+          fi
+
+          if [ "$NEEDS_COMMIT" = true ]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add etc/module.xml
+            git commit -m "chore: update module versions to $NEW_VERSION"
+            git push
+          else
+            echo "module.xml already up to date."
+          fi
