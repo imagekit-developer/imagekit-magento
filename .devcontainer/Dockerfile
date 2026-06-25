@@ -1,8 +1,8 @@
-FROM php:8.2-fpm-bullseye
+FROM php:8.3-fpm-bullseye
 
 ARG DEBIAN_FRONTEND=noninteractive
 
-RUN apt-get update && apt-get install -y --no-install-recommends \
+RUN apt-get update && apt-get install -y --no-install-recommends --fix-missing \
     bash \
     git \
     curl \
@@ -36,8 +36,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
       sockets \
       xsl \
       zip \
-    && pecl install xdebug \
-    && docker-php-ext-enable xdebug \
     && rm -rf /var/lib/apt/lists/*
 
 ENV NVM_DIR=/usr/local/nvm
